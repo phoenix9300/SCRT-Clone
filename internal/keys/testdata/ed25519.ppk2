@@ -1,0 +1,9 @@
+PuTTY-User-Key-File-2: ssh-ed25519
+Encryption: none
+Comment: ed25519@hawser-test
+Public-Lines: 2
+AAAAC3NzaC1lZDI1NTE5AAAAIGUFVktBF8awCUjtJGweVdbvqHOldbzly5f7lA+h
+c7cj
+Private-Lines: 1
+AAAAIPvadELgDT7y3MJpBtQMMA49ZDhYyL581I9ClZ3vXP1g
+Private-MAC: 288f6d387b6782f64937c9f3519a8eb650d0b26b

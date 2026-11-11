@@ -1,0 +1,15 @@
+# build output
+/hawser
+/hawser.exe
+/dist/
+*.test
+*.out
+
+# web UI
+web/node_modules/
+internal/webui/dist/app/
+
+# editors / OS
+.DS_Store
+.idea/
+.vscode/

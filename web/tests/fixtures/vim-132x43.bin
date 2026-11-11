@@ -1,0 +1,87 @@
+2 files to edit
+[?1049h[22;0;0t[>4;2m[?1h=[?2004h[?1004h[1;43r[?12h[?12l[22;2t[22;1t[27m[23m[29m[m[H[2J[?25l[43;1H"/etc/passwd" 58L, 3379B[43;7Hgroup" [43;15H[K[43;14H50L, 971B[2;1H▽[6n[2;1H  [3;1HPzz\[0%m[6n[3;1H           [1;1H[>c]10;?]11;?[1;1Hroot:x:0:0:root:/root:/bin/bash[35C[7m|[m
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin                   [7m|[m
+bin:x:2:2:bin:/bin:/usr/sbin/nologin                              [7m|[m
+sys:x:3:3:sys:/dev:/usr/sbin/nologin[30C[7m|[m
+sync:x:4:65534:sync:/bin:/bin/sync[32C[7m|[m
+games:x:5:60:games:/usr/games:/usr/sbin/nologin[19C[7m|[m
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin[19C[7m|[m
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin[22C[7m|[m
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin[23C[7m|[m
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin[17C[7m|[m
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin[15C[7m|[m
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin[24C[7m|[m
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin[14C[7m|[m
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin[14C[7m|[m
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin     [7m|[m
+irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin[22C[7m|[m
+_apt:x:42:65534::/nonexistent:/usr/sbin/nologin[19C[7m|[m
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin[8C[7m|[m
+ubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash[18C[7m|[m
+systemd-network:x:998:998:systemd Network Management:/:/usr/sbin/n[7m|[m
+ologin[60C[7m|[m
+messagebus:x:100:102::/nonexistent:/usr/sbin/nologin[14C[7m|[m
+redis:x:101:103::/var/lib/redis:/usr/sbin/nologin[17C[7m|[m
+postgres:x:102:104:PostgreSQL administrator,,,:/var/lib/postgresql[7m|[m
+:/bin/bash[56C[7m|[m
+polkitd:x:997:997:User for polkitd:/:/usr/sbin/nologin[12C[7m|[m
+nixbld1:x:30001:30000:Nix build user 1:/var/empty:/sbin/nologin   [7m|[m
+nixbld2:x:30002:30000:Nix build user 2:/var/empty:/sbin/nologin   [7m|[m
+nixbld3:x:30003:30000:Nix build user 3:/var/empty:/sbin/nologin   [7m|[m
+nixbld4:x:30004:30000:Nix build user 4:/var/empty:/sbin/nologin   [7m|[m
+nixbld5:x:30005:30000:Nix build user 5:/var/empty:/sbin/nologin   [7m|[m
+nixbld6:x:30006:30000:Nix build user 6:/var/empty:/sbin/nologin   [7m|[m
+nixbld7:x:30007:30000:Nix build user 7:/var/empty:/sbin/nologin   [7m|[m
+nixbld8:x:30008:30000:Nix build user 8:/var/empty:/sbin/nologin   [7m|[m
+nixbld9:x:30009:30000:Nix build user 9:/var/empty:/sbin/nologin   [7m|[m
+nixbld10:x:30010:30000:Nix build user 10:/var/empty:/sbin/nologin [7m|[m
+nixbld11:x:30011:30000:Nix build user 11:/var/empty:/sbin/nologin [7m|[m
+nixbld12:x:30012:30000:Nix build user 12:/var/empty:/sbin/nologin [7m|[m
+nixbld13:x:30013:30000:Nix build user 13:/var/empty:/sbin/nologin [7m|[m
+nixbld14:x:30014:30000:Nix build user 14:/var/empty:/sbin/nologin [7m|[m
+nixbld15:x:30015:30000:Nix build user 15:/var/empty:/sbin/nologin [7m|[m
+[1m[7m/etc/passwd                                                        [m[1;68Hroot:x:0:[2;68Hdaemon:x:1:[2;79H[K[3;68Hbin:x:2:[3;76H[K[4;68Hsys:x:3:[5;68Hadm:x:4:ubuntu[6;68Htty:x:5:[7;68Hdisk:x:6:[8;68Hlp:x:7:[9;68Hmail:x:8:[10;68Hnews:x:9:[11;68Huucp:x:10:[12;68Hman:x:12:[13;68Hproxy:x:13:[14;68Hkmem:x:15:[15;68Hdialout:x:20:ubuntu[16;68Hfax:x:21:[17;68Hvoice:x:22:[18;68Hcdrom:x:24:ubuntu[19;68Hfloppy:x:25:ubuntu[20;68Htape:x:26:[21;68Hsudo:x:27:ubuntu[22;68Haudio:x:29:ubuntu[23;68Hdip:x:30:ubuntu[24;68Hwww-data:x:33:[25;68Hbackup:x:34:[26;68Hoperator:x:37:[27;68Hlist:x:38:[28;68Hirc:x:39:[29;68Hsrc:x:40:[30;68Hshadow:x:42:[31;68Hutmp:x:43:[32;68Hvideo:x:44:ubuntu[33;68Hsasl:x:45:[34;68Hplugdev:x:46:ubuntu[35;68Hstaff:x:50:[36;68Hgames:x:60:[37;68Husers:x:100:[38;68Hnogroup:x:65534:[39;68Hubuntu:x:1000:[40;68Hsystemd-journal:x:999:[41;68Hsystemd-network:x:998:[42;68H[7m/etc/group                                                       [1;1H[?25h[?4m[?25l[m[43;1H[K[43;1H:set nu cursorline[1;1H[4m[38;5;130m  1 [m[4mroot:x:0:0:root:/root:/bin/bash                               [m
+[38;5;130m  2 [mdaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+[38;5;130m  3 [mbin:x:2:2:bin:/bin:/usr/sbin/nologin
+[38;5;130m  4 [msys:x:3:3:sys:/dev:/usr/sbin/nologin
+[38;5;130m  5 [msync:x:4:65534:sync:/bin:/bin/sync
+[38;5;130m  6 [mgames:x:5:60:games:/usr/games:/usr/sbin/nologin
+[38;5;130m  7 [mman:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+[38;5;130m  8 [mlp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+[38;5;130m  9 [mmail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+[38;5;130m 10 [mnews:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+[38;5;130m 11 [muucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+[38;5;130m 12 [mproxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+[38;5;130m 13 [mwww-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+[38;5;130m 14 [mbackup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+[38;5;130m 15 [mlist:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+[38;5;130m 16 [mirc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
+[38;5;130m 17 [m_apt:x:42:65534::/nonexistent:/usr/sbin/nologin
+[38;5;130m 18 [mnobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+[38;5;130m 19 [mubuntu:x:1000:1000:Ubuntu:/home/ubuntu:/bin/bash
+[38;5;130m 20 [msystemd-network:x:998:998:systemd Network Management:/:/usr/sb
+[38;5;130m    [min/nologin
+[38;5;130m 21 [mmessagebus:x:100:102::/nonexistent:/usr/sbin/nologin
+[38;5;130m 22 [mredis:x:101:103::/var/lib/redis:/usr/sbin/nologin
+[38;5;130m 23 [mpostgres:x:102:104:PostgreSQL administrator,,,:/var/lib/postgr
+[38;5;130m    [mesql:/bin/bash
+[38;5;130m 24 [mpolkitd:x:997:997:User for polkitd:/:/usr/sbin/nologin
+[38;5;130m 25 [mnixbld1:x:30001:30000:Nix build user 1:/var/empty:/sbin/nologi
+[38;5;130m    [mn                                                          
+[38;5;130m 26 [mnixbld2:x:30002:30000:Nix build user 2:/var/empty:/sbin/nologi
+[38;5;130m    [mn                                                          
+[38;5;130m 27 [mnixbld3:x:30003:30000:Nix build user 3:/var/empty:/sbin/nologi
+[38;5;130m    [mn                                                          
+[38;5;130m 28 [mnixbld4:x:30004:30000:Nix build user 4:/var/empty:/sbin/nologi
+[38;5;130m    [mn                                                          
+[38;5;130m 29 [mnixbld5:x:30005:30000:Nix build user 5:/var/empty:/sbin/nologi
+[38;5;130m    [mn                                                            
+[38;5;130m 30 [mnixbld6:x:30006:30000:Nix build user 6:/var/empty:/sbin/nologi
+[38;5;130m    [mn                                                            
+[38;5;130m 31 [mnixbld7:x:30007:30000:Nix build user 7:/var/empty:/sbin/nologi
+[38;5;130m    [mn                                                            
+[38;5;130m 32 [mnixbld8:x:30008:30000:Nix build user 8:/var/empty:/sbin/nologi[41;2H[38;5;130m   [m[94m@                                                             [1;5H[?25h[?25l[m[38;5;130m  1 [mroot:x:0:0:root:/root:/bin/bash                               
+[4m[38;5;130m  2 [m[4mdaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin               [2;5H[?25h[?25l[m[38;5;130m  2 [mdaemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin               
+[4m[38;5;130m  3 [m[4mbin:x:2:2:bin:/bin:/usr/sbin/nologin                          [3;5H[?25h[?25l[m[38;5;130m  3 [mbin:x:2:2:bin:/bin:/usr/sbin/nologin                          
+[4m[38;5;130m  4 [m[4msys:x:3:3:sys:/dev:/usr/sbin/nologin                          [4;5H[?25h[m[42;1H[7m/etc/passwd[m[1m[7m [m[7m                                                        [m[1m[7m/etc/group                                                       [1;68H[?25l[m[43;1H[K[43;1H/root[31msearch hit BOTTOM, continuing at TOP[1;68H[?25h[?25l[m[43;1H[K[43;1H:set hlsearch[1;5H[103mroot[7Croot[m:/[103mroot[m[41;2H[38;5;130m32[m[1Cnixbld8:x:30008:30000:Nix build user 8:/var/empty:/sbin/nologi[41;2H[38;5;130m   [m[94m@                                                             [m[1;68H[103mroot[?25h[?25l[m[43;1H[1m-- INSERT --[m[43;13H[K[43;1H[K[1;89H[1;77Happended text[42;79H[1m[7m[+][m
+[1m-- INSERT --[1;90H[?25h[?25l[m[43;1H[K[1;89H[?25h[?25l[1;68Hdaemon:x:1:                                                      [2;68Hbin:x:2:                                                         [3;68Hsys:x:3:                                                         [4;68Hadm:x:4:ubuntu                                                   [5;68Htty:x:5:                                                         [6;68Hdisk:x:6:                                                        [7;68Hlp:x:7:                                                          [8;68Hmail:x:8:                                                        [9;68Hnews:x:9:                                                        [10;68Huucp:x:10:                                                       [11;68Hman:x:12:                                                        [12;68Hproxy:x:13:                                                      [13;68Hkmem:x:15:                                                       [14;68Hdialout:x:20:ubuntu                                              [15;68Hfax:x:21:                                                        [16;68Hvoice:x:22:                                                      [17;68Hcdrom:x:24:ubuntu                                                [18;68Hfloppy:x:25:ubuntu                                               [19;68Htape:x:26:                                                       [20;68Hsudo:x:27:ubuntu                                                 [21;68Haudio:x:29:ubuntu                                                [22;68Hdip:x:30:ubuntu                                                  [23;68Hwww-data:x:33:                                                   [24;68Hbackup:x:34:                                                     [25;68Hoperator:x:37:                                                   [26;68Hlist:x:38:                                                       [27;68Hirc:x:39:                                                        [28;68Hsrc:x:40:                                                        [29;68Hshadow:x:42:                                                     [30;68Hutmp:x:43:                                                       [31;68Hvideo:x:44:ubuntu                                                [32;68Hsasl:x:45:                                                       [33;68Hplugdev:x:46:ubuntu                                              [34;68Hstaff:x:50:                                                      [35;68Hgames:x:60:                                                      [36;68Husers:x:100:                                                     [37;68Hnogroup:x:65534:                                                 [38;68Hubuntu:x:1000:                                                   [39;68Hsystemd-journal:x:999:                                           [40;68Hsystemd-network:x:998:                                           [41;68H                                                                 [41;68Hssl-cert:x:101:postgres[1;68H[?25h[?25l[43;1H1 more line; before #2  1 second ago[1;68H[103mroot[m:x:0:appended text[2;68Hdaemon:x:1:[3;68Hbin:x:2[4;68Hsys:x:3[4;76H[K[5;68Hadm:x:4:ubuntu[6;68Htty:x:5:[6;76H[K[7;68Hdisk:x:6:[8;68Hlp:x:7[8;75H[K[9;68Hmail:x:8[10;68Hnews:x:9:[10;77H[K[11;68Huucp:x:10:[12;68Hman:x:12:[12;77H[K[13;68Hproxy:x:13:[14;68Hkmem:x:15[14;78H[K[15;68Hdialout:x:20:ubuntu[16;68Hfax:x:21:[16;77H[K[17;68Hvoice:x:22[17;79H[K[18;68Hcdrom:x:24:ubuntu[18;85H[K[19;68Hfloppy:x:25:ubuntu[20;68Htape:x:26[20;78H[K[21;68Hsudo:x:27:ubuntu[21;84H[K[22;68Haudio:x:29:ubuntu[23;68Hdip:x:30:ubuntu[24;68Hwww-data:x:33:[25;68Hbackup:x:34:[25;80H[K[26;68Hoperator:x:37:[27;68Hlist:x:38:[28;68Hirc:x:39[29;69Hrc:x:40[29;77H[K[30;68Hshadow:x:42:[31;68Hutmp:x:43:[31;78H[K[32;68Hvideo:x:44:ubuntu[33;68Hsasl:x:45[33;78H[K[34;68Hplugdev:x:46:ubuntu[35;68Hstaff:x:5[36;68Hgames:x:60:[36;79H[K[37;68Husers:x:100:[37;80H[K[38;68Hnogroup:x:65534:[39;68Hubuntu:x:1000:[39;82H[K[40;76Hjournal:x:999[41;69Hystemd-network:x:998:[41;90H[K[1;68H[?25h[?25l[43;1H[K[43;1H:sp[21;68H[1m[7m/etc/group [+]                                                   [m[22;68H[103mroot[m:x:0:appended text[23;69Haemon:x:1:[23;79H[K[24;68Hbin:x:2:[24;76H[K[25;68Hsys:x:3:[25;76H[K[26;68Hadm:x:4:ubuntu[27;68Htty:x:5:[27;76H[K[28;68Hdisk:x:6[29;68Hlp:x:7:[29;75H[K[30;68Hmail:x:8[30;77H[K[31;68Hnews:x:9:[31;77H[K[32;68Huucp:x:10:[32;78H[K[33;68Hman:x:12:[33;77H[K[34;69Hroxy:x:13:[34;79H[K[35;68Hkmem:x:15:[35;78H[K[36;68Hdialout:x:20:ubuntu[37;68Hfax:x:21:[37;77H[K[38;68Hvoice:x:22:[38;79H[K[39;68Hcdrom:x:24:ubuntu[40;68Hfloppy:x:25:ubuntu[40;86H[K[41;68Htape:x:26:[41;78H[K[42;68H[7m/etc/group [+][m[1m[7m [m[7m                                                   [1;68H[?25h[?25l[muucp:x:10:[1;78H[K[2;68Hman:x:12[2;77H[K[3;68Hproxy:x:13:[4;68Hkmem:x:15:[5;68Hdialout:x:20:ubuntu[6;68Hfax:x:21:[7;68Hvoice:x:22:[8;68Hcdrom:x:24:ubuntu[9;68Hfloppy:x:25:ubuntu[10;68Htape:x:26:[11;68Hsudo:x:27:ubuntu[12;68Haudio:x:29:ubuntu[13;68Hdip:x:30:ubuntu[14;68Hwww-data:x:33:[15;68Hbackup:x:34:[15;80H[K[16;68Hoperator:x:37:[17;68Hlist:x:38:[17;78H[K[18;68Hirc:x:39:[18;77H[K[19;68Hsrc:x:40[19;77H[K[20;68Hshadow:x:42:[43;1H[K[1;68H[?25h[?25l[43;1H:qa![?2004l[>4;m[23;2t[23;1t[43;1H[K[43;1H[?1004l[?2004l[?1l>[?1049l[23;0;0t[?25h[>4;m

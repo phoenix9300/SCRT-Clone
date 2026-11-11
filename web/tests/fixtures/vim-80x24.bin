@@ -1,0 +1,63 @@
+[?1049h[22;0;0t[>4;2m[?1h=[?2004h[?1004h[1;24r[?12h[?12l[22;2t[22;1t[27m[23m[29m[m[H[2J[?25l[24;1H"/etc/services" 361L, 12813B[2;1H▽[6n[2;1H  [3;1HPzz\[0%m[6n[3;1H           [1;1H[>c]10;?]11;?[1;1H# Network services, Internet style
+#[2;2H[K[3;1H# Updated from https://www.iana.org/assignments/service-names-port-numbers/servii[4;1Hce-names-port-numbers.xhtml .
+#
+# New ports will be added on request if they have been officially assigned
+# by IANA and used in the real-world or are needed by a debian package.
+# If you need a huge list of used numbers please install the nmap package.
+
+tcpmux[10C1/tcp[27C# TCP port service multiplexer
+echo[12C7/tcp
+echo[12C7/udp
+discard[9C9/tcp[11Csink null
+discard[9C9/udp[11Csink null
+systat[10C11/tcp[10Cusers
+daytime[9C13/tcp
+daytime[9C13/udp
+netstat[9C15/tcp
+qotd[12C17/tcp[10Cquote
+chargen[9C19/tcp[10Cttytst source
+chargen[9C19/udp[10Cttytst source
+ftp-data[8C20/tcp
+ftp[13C21/tcp[1;1H[?25h[?4m
+
+
+
+
+[?25l[27m[23m[29m[m[H[2J[1;1Hftp-data[8C20/tcp
+ftp[13C21/tcp
+fsp[13C21/udp[10Cfspd
+ssh[13C22/tcp[26C# SSH Remote Login Protocol
+telnet[10C23/tcp
+smtp[12C25/tcp[10Cmail
+time[12C37/tcp[10Ctimserver
+time[12C37/udp[10Ctimserver
+whois[11C43/tcp[10Cnicname
+tacacs[10C49/tcp[26C# Login Host Protocol (TACACS)
+tacacs[10C49/udp
+domain[10C53/tcp[26C# Domain Name Server
+domain[10C53/udp
+bootps[10C67/udp
+bootpc[10C68/udp
+tftp[12C69/udp
+gopher[10C70/tcp[26C# Internet Gopher
+finger[10C79/tcp
+http[12C80/tcp[10Cwww[13C# WorldWideWeb HTTP
+kerberos[8C88/tcp[10Ckerberos5 krb5 kerberos-sec     # Kerberos v5
+kerberos[8C88/udp[10Ckerberos5 krb5 kerberos-sec     # Kerberos v5
+iso-tsap[8C102/tcp[9Ctsap[12C# part of ISODE
+acr-nema[8C104/tcp[9Cdicom[11C# Digital Imag. & Comm. 300[1;1H[?25h[?25l[24;1H:set nu[1;1H[38;5;130m 21 [mftp-data        20/tcp
+[38;5;130m 22 [mftp[9C    21/tcp
+[38;5;130m 23 [mfsp[9C    21/udp          fspd
+[38;5;130m 24 [mssh[9C    22/tcp[22C    # SSH Remote Login Protocol
+[38;5;130m 25 [mtelnet          23/tcp
+[38;5;130m 26 [msmtp[8C    25/tcp          mail
+[38;5;130m 27 [mtime[8C    37/tcp          timserver
+[38;5;130m 28 [mtime[8C    37/udp          timserver
+[38;5;130m 29 [mwhois[7C    43/tcp          nicname
+[38;5;130m 30 [mtacacs          49/tcp[22C    # Login Host Protocol (TACACC[11;1H[38;5;130m    [mS)[11;17H[K[12;1H[38;5;130m 31 [mtacacs          49/udp[12;49H[K[13;1H[38;5;130m 32 [mdomain          53/tcp[26C# Domain Name Server
+[38;5;130m 33 [mdomain          53/udp
+[38;5;130m 34 [mbootps          67/udp
+[38;5;130m 35 [mbootpc          68/udp
+[38;5;130m 36 [mtftp[8C    69/udp[17;49H[K[18;1H[38;5;130m 37 [mgopher          70/tcp[26C# Internet Gopher
+[38;5;130m 38 [mfinger          79/tcp[19;33H[K[20;1H[38;5;130m 39 [mhttp[8C    80/tcp          www             # WorldWideWeb HTTP[20;72H[K[21;1H[38;5;130m 40 [mkerberos        88/tcp          kerberos5 krb5 kerberos-sec     # Kerberos vv[22;1H[38;5;130m    [m5[22;6H[K[23;1H[38;5;130m 41 [mkerberos        88/udp          kerberos5 krb5 kerberos-sec     # Kerberos v[23;2H[38;5;130m   [m[94m@                                                                           [1;5H[?25h[?25l[m[24;1H[K[24;1H/tcp[1;24H[?25h[?25l[24;1H[2;24H[?25h[?25l[24;1H[1m-- INSERT --[m[24;1H[K[2;34H[2;24Hhello worldtcp[24;1H[1m-- INSERT --[2;35H[?25h[?25l[m[24;1H[K[2;34H[?25h[?25l[24;1H:vsplit[1;41H[7m|[2;41H|[3;41H|[4;41H|[m[5;2H[38;5;130m  [m[1C            # SSH Remote Login Proto[7m|[m[6;2H[38;5;130m  [m[1Ccol [12C      [10C    [7m|[m[7;3H[38;5;130m5[m[2Celnet[10C23[14C    [7m|[m[8;3H[38;5;130m6[m[1Csmtp[12C25/tc[11Cmail[7m|[m[9;3H[38;5;130m7[m[1Ctime [11C37[14Ctims[7m|[m[10;2H[38;5;130m  [m[1Cerver [10C      [14C[7m|[m[11;2H[38;5;130m28[m[1Ctime[12C37/udp[10Ctims[7m|[m[12;2H[38;5;130m  [m[1Cerver [10C      [14C[7m|[m[13;2H[38;5;130m29[m[1Cwhois [10C4[15Cnicn[7m|[m[14;2H[38;5;130m  [m[1Came   [10C      [14C[7m|[m[15;3H[38;5;130m0[m[1Ctacac[11C49/tc[15C[7m|[m[16;2H[38;5;130m  [m[1C            # Login Host Protocol (T[7m|[m[17;2H[38;5;130m  [m[1CACACS)[10C      [14C[7m|[m[18;3H[38;5;130m1[m[1Ctacacs[10C49/ud[15C[7m|[m[19;3H[38;5;130m2[m[1Cdomain[10C53[18C[7m|[m[20;2H[38;5;130m  [m[1C    [8C# Domain Name Server    [7m|[m[21;2H[38;5;130m33[m[1Cdomain  [8C53/ud[11C    [7m|[m[22;2H[38;5;130m34[m[1Cbootps[10C67/udp[14C[7m|[m
+[1m[7m/etc/services [+]                        [m[1;42H[38;5;130m 21 [mftp-data[8C20/tcp[2;42H[38;5;130m 22 [mftp[13C21/hello worldtcp[3;42H[38;5;130m 23 [mfsp[13C21/udp[10Cfsp[4;42H[38;5;130m    [md[4;53H[K[5;42H[38;5;130m 24 [mssh[13C22/tcp[6;42H[38;5;130m    [m[13C# SSH Remote Login Pro[7;42H[38;5;130m    [mtocol[8;42H[38;5;130m 25 [mtelnet[10C23/tcp[9;42H[38;5;130m 26 [msmtp[12C25/tcp[10Cmai[10;42H[38;5;130m    [ml[10;53H[K[11;42H[38;5;130m 27 [mtime[12C37/tcp[10Ctim[12;42H[38;5;130m    [mserver[13;42H[38;5;130m 28 [mtime            37/udp          tim[14;42H[38;5;130m    [mserver[15;42H[38;5;130m 29 [mwhois[11C43/tcp[10Cnic[16;42H[38;5;130m    [mname[17;42H[38;5;130m 30 [mtacacs[10C49/tcp[18;42H[38;5;130m    [m[7C      # Login Host Protocol[19;42H[38;5;130m    [m(TACACS)[20;42H[38;5;130m 31 [mtacacs          49/udp[20;68H[K[21;42H[38;5;130m 32 [mdomain          53/tcp             [22;42H[38;5;130m    [m[13C# Domain Name Server[23;42H[7m/etc/services [+]                      [2;34H[?25h[23;1H/etc/services [+][m[1m[7m [m[7m                        [m[1m[7m/etc/services [+]                      [2;75H[?25l[m[1;42H[38;5;130m352[m[1Csgi-cad [8C17004/tcp[2;43H[38;5;130m  [m[1C   [10C# Cluster Admin daemon[3;42H[38;5;130m35[m[2Cbinkp[12C4554/tcp[7C   [4;46H [12C# binkp fidonet protoc[5;43H[38;5;130m  [m[1Col[5;48H[K[6;42H[38;5;130m354[m[1Casp[10C   27374/tcp          [7;46H     [8C# Address Search Proto[8;43H[38;5;130m  [m[1Cco[8;49H[K[9;42H[38;5;130m355[m[1Casp [13C7374/udp[9;78H[K[10;42H[38;5;130m356[m[1Ccsync2[10C30865/tcp[11;43H[38;5;130m  [m[1C    [9C# cluster synchronizat[12;46Hion tool[13;42H[38;5;130m357[m[1Cdircproxy[7C57000/tcp[7C   [14;46H      [7C# Detachable IRC Proxy[15;42H[38;5;130m358[m[1Ctfido[11C60177/tcp[7C   [16;46H    [9C# fidonet EMSI over te[17;43H[38;5;130m  [m[1Clnet[17;50H[K[18;42H[38;5;130m359[m[1Cfido[9C   60179/tcp         [19;46H             # fidonet EMSI over TC[20;43H[38;5;130m  [m[1CP[20;47H[K[21;42H[38;5;130m360[m[21;46H[K[22;42H[38;5;130m361[m[1C# Local services[22;62H[K[22;46H[?25h[?25l[24;1H[K[24;1H:syntax on[1;5H[36mftp-data[m[8C[31m20[m[35m/[m[32mtcp[m[2;5H[36mftp[m[13C[31m21[m[35m/[m[32mhello[m [35mworldtcp[m[3;5H[36mfsp[m[13C[31m21[m[35m/[m[32mudp[m[10C[35mfspd[m[4;5H[36mssh[m[13C[31m22[m[35m/[m[32mtcp[m[5;17H[34m# SSH Remote Login Proto[6;5Hcol[m[7;5H[36mtelnet[m[10C[31m23[m[35m/[m[32mtcp[m[8;5H[36msmtp[m[12C[31m25[m[35m/[m[32mtcp[m[10C[35mmail[m[9;5H[36mtime[m[12C[31m37[m[35m/[m[32mtcp[m[10C[35mtims[10;5Herver[m[11;5H[36mtime[m[12C[31m37[m[35m/[m[32mudp[m[10C[35mtims[12;5Herver[m[13;5H[36mwhois[m[11C[31m43[m[35m/[m[32mtcp[m[10C[35mnicn[14;5Hame[m[15;5H[36mtacacs[m[10C[31m49[m[35m/[m[32mtcp[m[16;17H[34m# Login Host Protocol (T[17;5HACACS)[m[18;5H[36mtacacs[m[10C[31m49[m[35m/[m[32mudp[m[19;5H[36mdomain[m[10C[31m53[m[35m/[m[32mtcp[m[20;17H[34m# Domain Name Server[m[21;5H[36mdomain[m[10C[31m53[m[35m/[m[32mudp[m[22;5H[36mbootps[m[10C[31m67[m[35m/[m[32mudp[m[1;46H[36msgi-cad[m[9C[31m17004[m[35m/[m[32mtcp[m[2;59H[34m# Cluster Admin daemon[m[3;46H[36mbinkp[m[11C[31m24554[m[35m/[m[32mtcp[m[4;59H[34m# binkp fidonet protoc[5;46Hol[m[6;46H[36masp[m[13C[31m27374[m[35m/[m[32mtcp[m[7;59H[34m# Address Search Proto[8;46Hcol[m[9;46H[36masp[m[13C[31m27374[m[35m/[m[32mudp[m[10;46H[36mcsync2[m[10C[31m30865[m[35m/[m[32mtcp[m[11;59H[34m# cluster synchronizat[12;46Hion tool[m[13;46H[36mdircproxy[m[7C[31m57000[m[35m/[m[32mtcp[m[14;59H[34m# Detachable IRC Proxy[m[15;46H[36mtfido[m[11C[31m60177[m[35m/[m[32mtcp[m[16;59H[34m# fidonet EMSI over te[17;46Hlnet[m[18;46H[36mfido[m[12C[31m60179[m[35m/[m[32mtcp[m[19;59H[34m# fidonet EMSI over TC[20;46HP[22;46H# Local services[22;46H[?25h[?25l[m[1;42H[38;5;130m  1[m[1C[34m# Network services, Internet style[m[2;44H[38;5;130m2[m[1C[34m#[m[2;59H[K[3;42H[38;5;130m  [m[2C[34m# Updated from https://www.iana.org[4;46H/assignments/service-names-port-num[5;46Hbers/service-names-port-numbers.xht[m[6;42H[38;5;130m   [m[1C[34mml .[m[6;62H[K[7;44H[38;5;130m4[m[1C[34m#[m[7;59H[K[8;44H[38;5;130m5[m[1C[34m# New ports will be added on reques[m[9;42H[38;5;130m   [m[1C[34mt if they have been officially assi[m[10;42H[38;5;130m   [m[1C[34mgned[m[10;50H[K[11;44H[38;5;130m6[m[1C[34m# by IANA and used in the real-worl[12;46Hd or are needed by a debian package[m[13;42H[38;5;130m   [m[1C[34m.[m[13;47H[K[14;44H[38;5;130m7[m[1C[34m# If you need a huge list of used n[m[15;42H[38;5;130m   [m[1C[34mumbers please install the nmap pack[16;46Hage.[m[16;59H[K[17;44H[38;5;130m8[m[17;46H[K[18;42H[38;5;130m  [m[2C[36mtcpmux[m[10C[31m1[m[35m/[m[32mtcp[m    [19;61H[34mTCP port service mul[20;46Htiplexer[m[21;42H[38;5;130m 1[m[2C[36mecho[m[12C[31m7[m[35m/[m[32mtcp[m[22;42H[38;5;130m 1[m[2C[36mecho[m            [31m7[m[35m/[m[32mudp[1;46H[?25h[?25l[m[24;1H[K[24;1H:q![1;41H[K[2;41H[K[3;41H[K[4;41H            [34m# SSH Remote Login Protocol[m[4;80H[K[5;2H[38;5;130m25[m[1C[36mtelnet[m          [31m23[m[35m/[m[32mtcp[m[5;27H[K[6;2H[38;5;130m26[m[1C[36msmtp[m[12C[31m25[m[35m/[m[32mtcp[m[10C[35mmail[m[6;41H[K[7;3H[38;5;130m7[m[2C[36mime[m  [10C[31m37[m[14C[35mtimserver[m[7;46H[K[8;3H[38;5;130m8[m[1C[36mtime[m[12C[31m37[m[1C[32mud[m[11C[35mtimserver[m[8;46H[K[9;3H[38;5;130m9[m[1C[36mwhois[m[11C[31m43[m[14C[35mnicname[m[9;44H[K[10;2H[38;5;130m30[m[1C[36mtacacs[m[10C[31m49[m[35m/[m[32mtcp[m[14C            [34m# Login Host Protocol (TACACC[m[11;1H[38;5;130m   [m[1C[34mS)[m[11;7H[K[12;2H[38;5;130m31[m[1C[36mtacacs[m[10C[31m49[m[35m/[m[32mudp[m[12;41H[K[13;2H[38;5;130m32[m[1C[36mdomain[m[10C[31m5[m[15C                [34m# Domain Name Server[m[14;2H[38;5;130m33[m[1C[36mdomain[m[10C[31m53[m[35m/[m[32mudp[m[14;41H[K[15;3H[38;5;130m4[m[1C[36mbootp[m[11C[31m67[m[1C[32mud[m[15;41H[K[16;2H[38;5;130m35[m[1C[36mbootpc[m          [31m68[m[35m/[m[32mudp[m[16;27H[K[17;2H[38;5;130m36[m[1C[36mtftp[m  [10C[31m69[m[35m/[m[32mudp[m[17;41H[K[18;3H[38;5;130m7[m[1C[36mgopher[m[10C[31m70[m[1C[32mtc[m[15C            [34m# Internet Gopher[m[19;3H[38;5;130m8[m[1C[36mfinger[m[10C[31m79[m[19;41H[K[20;2H[38;5;130m39[m[1C[36mhttp[m[8C    [31m80[m[35m/[m[32mtcp[m          [35mwww[m             [34m# WorldWideWeb HTTP[m[21;2H[38;5;130m40[m[1C[36mkerberos[m[8C[31m88[m[1C[32mtc[m[11C[35mkerberos5[m [35mkrb5[m [35mkerberos-sec[m     [34m# Kerberos vv[m[22;1H[38;5;130m   [m[1C[34m5[m[22;6H[K[23;1H[38;5;130m 41 [m[36mkerberos[m        [31m88[m[35m/[m[32mudp[m          [35mkerberos5[m [35mkrb5[m [35mkerberos-sec[m     [34m# Kerberos v[m[23;2H[38;5;130m   [m[94m@                                                                           [2;34H[?25h[?25l[m[24;1H[K[24;1H:q![?2004l[>4;m[23;2t[23;1t[24;1H[K[24;1H[?1004l[?2004l[?1l>[?1049l[23;0;0t[?25h[>4;m

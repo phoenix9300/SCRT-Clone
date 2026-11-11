@@ -1,0 +1,419 @@
+[?1049h[22;0;0t[?1h=[H[2J[?12l[?25h[?1000l[?1002l[?1003l[?1006l[?1005l[?2004h(B[m[?12l[?25h[?1006l[?1000l[?1002l[?1003l[1;1H[1;36r[c[>c[>q]10;?\]11;?\[1;1H[?25l[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[30m[42m
+[0] 0:bash*                                                                                         "vm" 16:02 11-Nov-26(B[m[?12l[?25h[1;1H(B[m[?12l[?25h[?1006l[?1000l[?1002l[?1003l[1;1H[1;36r[?25l[1;1Hlrwxrwxrwx  1 root root          29 Mar 31  2024 [36m[1manimate-im6(B[m -> /etc/alternatives/animate-im6[K
+-rwxr-xr-x  1 root root       14656 Mar 31  2024 [32m[1manimate-im6.q16(B[m[K
+-rwxr-xr-x  1 root root       18824 Oct 22  2024 [32m[1mapt(B[m[K
+lrwxrwxrwx  1 root root          18 Jan  5  2026 [36m[1mapt-add-repository(B[m -> add-apt-repository[K
+-rwxr-xr-x  1 root root       88544 Oct 22  2024 [32m[1mapt-cache(B[m[K
+-rwxr-xr-x  1 root root       27104 Oct 22  2024 [32m[1mapt-cdrom(B[m[K
+-rwxr-xr-x  1 root root       31120 Oct 22  2024 [32m[1mapt-config(B[m[K
+-rwxr-xr-x  1 root root       51680 Oct 22  2024 [32m[1mapt-get(B[m[K
+-rwxr-xr-x  1 root root       28664 Oct 22  2024 [32m[1mapt-key(B[m[K
+-rwxr-xr-x  1 root root       55776 Oct 22  2024 [32m[1mapt-mark(B[m[K
+lrwxrwxrwx  1 root root          19 Feb  9  2026 [36m[1mar(B[m -> x86_64-linux-gnu-ar[K
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1march(B[m[K
+lrwxrwxrwx  1 root root          19 Feb  9  2026 [36m[1mas(B[m -> x86_64-linux-gnu-as[K
+lrwxrwxrwx  1 root root          17 Mar 30  2024 [36m[1masan_symbolize(B[m -> asan_symbolize-18[K
+-rwxr-xr-x  1 root root       42995 May 27  2024 [32m[1masan_symbolize-18(B[m[K
+-rwxr-xr-x  1 root root       15204 Jan 14  2023 [32m[1mautoconf(B[m[K
+-rwxr-xr-x  1 root root        9034 Jan 14  2023 [32m[1mautoheader(B[m[K
+-rwxr-xr-x  1 root root       33475 Jan 14  2023 [32m[1mautom4te(B[m[K
+lrwxrwxrwx  1 root root          26 Feb  1  2024 [36m[1mautomake(B[m -> /etc/alternatives/automake[K
+-rwxr-xr-x  1 root root      262055 Feb  1  2024 [32m[1mautomake-1.16(B[m[K
+-rwxr-xr-x  1 root root       26934 Jan 14  2023 [32m[1mautoreconf(B[m[K
+-rwxr-xr-x  1 root root       17177 Jan 14  2023 [32m[1mautoscan(B[m[K
+-rwxr-xr-x  1 root root       34017 Jan 14  2023 [32m[1mautoupdate(B[m[K
+lrwxrwxrwx  1 root root          21 Apr  8  2024 [36m[1mawk(B[m -> /etc/alternatives/awk[K
+-rwxr-xr-x  1 root root       55816 Aug 25 15:09 [32m[1mb2sum(B[m[K
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase32(B[m[K
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase64(B[m[K
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1mbasename(B[m[K
+-rwxr-xr-x  1 root root       47624 Aug 25 15:09 [32m[1mbasenc(B[m[K
+-rwxr-xr-x  1 root root     1446024 Mar 31  2024 [32m[1mbash(B[m[K
+-rwxr-xr-x  1 root root        6988 Mar 31  2024 [32m[1mbashbug(B[m[K
+-rwxr-xr-x  1 root root       93000 Apr  8  2024 [32m[1mbc(B[m[K
+-rwxr-xr-x  1 root root       43272 Apr  8  2024 [32m[1mbdftopcf(B[m[K
+-rwxr-xr-x  1 root root       14488 Apr  8  2024 [32m[1mbdftruncate(B[m[K
+-rwxr-xr-x  1 roo[K[30m[42m
+[0] 0:bash*                                                                                         "vm" 16:02 11-Nov-26(B[m[?12l[?25h[35;18H[1;35r[1;1H[7S[28;18Ht root      504656 Sep 16 13:14 [32m[1mbison
+(B[m-rwxr-xr-x  1 root root        4214 Sep 16 13:14 [32m[1mbison.yacc(B[m[K
+lrwxrwxrwx  1 root root          27 Mar 30  2024 [36m[1mbugpoint(B[m -> ../lib/llvm-18/bin/bugpoint[K
+lrwxrwxrwx  1 root root          27 May 27  2024 [36m[1mbugpoint-18(B[m -> ../lib/llvm-18/bin/bugpoint[K
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbunzip2(B[m[K
+-rwxr-xr-x  1 root root       96864 Oct 12 07:36 [32m[1mbusctl(B[m[K
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbzcat(B[m[K
+[K[1;36r[35;1Hbash-5.2# [?25l[1;61H│[2;61H│[3;61H│[4;61H│[5;61H│[6;61H│[7;61H│[8;61H│[9;61H│[10;61H│[11;61H│[12;61H│[13;61H│[14;61H│[15;61H│[16;61H│[17;61H│[18;61H│[19;61H[32m│[20;61H│[21;61H│[22;61H│[23;61H│[24;61H│[25;61H│[26;61H│[27;61H│[28;61H│[29;61H│[30;61H│[31;61H│[32;61H│[33;61H│[34;61H│[35;61H│(B[m[1;60H[1K[36m[1m[Hize(B[m -> asan_symbolize-18
+-rwxr-xr-x  1 root root       42995 May 27  2024 [32m[1masan_symbol(B[m[3;60H[1K[32m[1mize-18(B[m
+-rwxr-xr-x  1 root root       15204 Jan 14  2023 [32m[1mautoconf(B[m[3X
+-rwxr-xr-x  1 root root        9034 Jan 14  2023 [32m[1mautoheader(B[m[1X
+-rwxr-xr-x  1 root root       33475 Jan 14  2023 [32m[1mautom4te(B[m[3X
+lrwxrwxrwx  1 root root          26 Feb  1  2024 [36m[1mautomake(B[m ->[8;60H[1K /etc/alternatives/automake
+-rwxr-xr-x  1 root root      262055 Feb  1  2024 [32m[1mautomake-1.(B[m[10;60H[1K[32m[1m16(B[m
+-rwxr-xr-x  1 root root       26934 Jan 14  2023 [32m[1mautoreconf(B[m[1X
+-rwxr-xr-x  1 root root       17177 Jan 14  2023 [32m[1mautoscan(B[m[3X
+-rwxr-xr-x  1 root root       34017 Jan 14  2023 [32m[1mautoupdate(B[m[1X
+lrwxrwxrwx  1 root root          21 Apr  8  2024 [36m[1mawk(B[m -> /etc[15;60H[1K/alternatives/awk
+-rwxr-xr-x  1 root root       55816 Aug 25 15:09 [32m[1mb2sum(B[m[6X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase32(B[m[5X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase64(B[m[5X
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1mbasename(B[m[3X
+-rwxr-xr-x  1 root root       47624 Aug 25 15:09 [32m[1mbasenc(B[m[5X
+-rwxr-xr-x  1 root root     1446024 Mar 31  2024 [32m[1mbash(B[m[7X
+-rwxr-xr-x  1 root root        6988 Mar 31  2024 [32m[1mbashbug(B[m[4X
+-rwxr-xr-x  1 root root       93000 Apr  8  2024 [32m[1mbc(B[m[9X
+-rwxr-xr-x  1 root root       43272 Apr  8  2024 [32m[1mbdftopcf(B[m[3X
+-rwxr-xr-x  1 root root       14488 Apr  8  2024 [32m[1mbdftruncate(B[m
+-rwxr-xr-x  1 root root      504656 Sep 16 13:14 [32m[1mbison(B[m[6X
+-rwxr-xr-x  1 root root        4214 Sep 16 13:14 [32m[1mbison.yacc(B[m[1X
+lrwxrwxrwx  1 root root          27 Mar 30  2024 [36m[1mbugpoint(B[m ->[29;60H[1K ../lib/llvm-18/bin/bugpoint
+lrwxrwxrwx  1 root root          27 May 27  2024 [36m[1mbugpoint-18(B[m
+ -> ../lib/llvm-18/bin/bugpoint[29X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbunzip2(B[m[4X
+-rwxr-xr-x  1 root root       96864 Oct 12 07:36 [32m[1mbusctl(B[m[5X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbzcat(B[m[6X[35;60H[1Kbash-5.2# [1;62H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[30m[42m
+[0] 0:bash*                                                                                         "vm" 16:02 11-Nov-26(B[m[?12l[?25h[1;62H[35;1Hbash-5.2# [50X[1;62Hroot@vm:/home/user/SCRT-Clone/web/tests# ls -la /etc  head [2;62H-40[3;62Hls: invalid option -- '4'[4;62HTry 'ls --help' for more information.[5;62Hroot@vm:/home/user/SCRT-Clone/web/tests# [?25l[1;61H│[2;61H│[3;61H│[4;61H│[5;61H│[6;61H│[7;61H│[8;61H│[9;61H│[10;61H│[11;61H│[12;61H│[13;61H│[14;61H│[15;61H│[16;61H│[17;61H│[18;61H[32m├───────────────────────────────────────────────────────────[19;61H│[20;61H│[21;61H│[22;61H│[23;61H│[24;61H│[25;61H│[26;61H│[27;61H│[28;61H│[29;61H│[30;61H│[31;61H│[32;61H│[33;61H│[34;61H│[35;61H│(B[m[1;60H[1K[36m[1m[Hize(B[m -> asan_symbolize-18
+-rwxr-xr-x  1 root root       42995 May 27  2024 [32m[1masan_symbol(B[m[3;60H[1K[32m[1mize-18(B[m
+-rwxr-xr-x  1 root root       15204 Jan 14  2023 [32m[1mautoconf(B[m[3X
+-rwxr-xr-x  1 root root        9034 Jan 14  2023 [32m[1mautoheader(B[m[1X
+-rwxr-xr-x  1 root root       33475 Jan 14  2023 [32m[1mautom4te(B[m[3X
+lrwxrwxrwx  1 root root          26 Feb  1  2024 [36m[1mautomake(B[m ->[8;60H[1K /etc/alternatives/automake
+-rwxr-xr-x  1 root root      262055 Feb  1  2024 [32m[1mautomake-1.(B[m[10;60H[1K[32m[1m16(B[m
+-rwxr-xr-x  1 root root       26934 Jan 14  2023 [32m[1mautoreconf(B[m[1X
+-rwxr-xr-x  1 root root       17177 Jan 14  2023 [32m[1mautoscan(B[m[3X
+-rwxr-xr-x  1 root root       34017 Jan 14  2023 [32m[1mautoupdate(B[m[1X
+lrwxrwxrwx  1 root root          21 Apr  8  2024 [36m[1mawk(B[m -> /etc[15;60H[1K/alternatives/awk
+-rwxr-xr-x  1 root root       55816 Aug 25 15:09 [32m[1mb2sum(B[m[6X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase32(B[m[5X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase64(B[m[5X
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1mbasename(B[m[3X
+-rwxr-xr-x  1 root root       47624 Aug 25 15:09 [32m[1mbasenc(B[m[5X
+-rwxr-xr-x  1 root root     1446024 Mar 31  2024 [32m[1mbash(B[m[7X
+-rwxr-xr-x  1 root root        6988 Mar 31  2024 [32m[1mbashbug(B[m[4X
+-rwxr-xr-x  1 root root       93000 Apr  8  2024 [32m[1mbc(B[m[9X
+-rwxr-xr-x  1 root root       43272 Apr  8  2024 [32m[1mbdftopcf(B[m[3X
+-rwxr-xr-x  1 root root       14488 Apr  8  2024 [32m[1mbdftruncate(B[m
+-rwxr-xr-x  1 root root      504656 Sep 16 13:14 [32m[1mbison(B[m[6X
+-rwxr-xr-x  1 root root        4214 Sep 16 13:14 [32m[1mbison.yacc(B[m[1X
+lrwxrwxrwx  1 root root          27 Mar 30  2024 [36m[1mbugpoint(B[m ->[29;60H[1K ../lib/llvm-18/bin/bugpoint
+lrwxrwxrwx  1 root root          27 May 27  2024 [36m[1mbugpoint-18(B[m
+ -> ../lib/llvm-18/bin/bugpoint[29X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbunzip2(B[m[4X
+-rwxr-xr-x  1 root root       96864 Oct 12 07:36 [32m[1mbusctl(B[m[5X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbzcat(B[m[6X[35;60H[1Kbash-5.2# [1;62Hroot@vm:/home/user/SCRT-Clone/web/tests# ls -la /etc  head [2;62H-40[K[3;62Hls: invalid option -- '4'[K[4;62HTry 'ls --help' for more information.[K[5;62Hroot@vm:/home/user/SCRT-Clone/web/tests# [K[6;62H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2B[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[30m[42m
+[0] 0:bash*                                                                                         "vm" 16:02 11-Nov-26(B[m[?12l[?25h[19;62H[5droot@vm:/home/user/SCRT-Clone/web/tests# [K[19;62Hroot@vm:/home/user/SCRT-Clone/web/tests# top -b -n1  head -[20;62H20[21;62Htop: invalid option -- '2'[22;62Hroot@vm:/home/user/SCRT-Clone/web/tests# [?7727h(B[m[?12l[?25h[?1006l[?1000l[?1002l[?1003l[1;1H[1;36r[22;103H[?25l[1;61H│[2;61H│[3;61H│[4;61H│[5;61H│[6;61H│[7;61H│[8;61H│[9;61H│[10;61H│[11;61H│[12;61H│[13;61H│[14;61H│[15;61H│[16;61H│[17;61H│[18;61H[32m├───────────────────────────────────────────────────────────[19;61H│[20;61H│[21;61H│[22;61H│[23;61H│[24;61H│[25;61H│[26;61H│[27;61H│[28;61H│[29;61H│[30;61H│[31;61H│[32;61H│[33;61H│[34;61H│[35;61H│(B[m[1;60H[1K[36m[1m[Hize(B[m -> asan_symbolize-18
+-rwxr-xr-x  1 root root       42995 May 27  2024 [32m[1masan_symbol(B[m[3;60H[1K[32m[1mize-18(B[m
+-rwxr-xr-x  1 root root       15204 Jan 14  2023 [32m[1mautoconf(B[m[3X
+-rwxr-xr-x  1 root root        9034 Jan 14  2023 [32m[1mautoheader(B[m[1X
+-rwxr-xr-x  1 root root       33475 Jan 14  2023 [32m[1mautom4te(B[m[3X
+lrwxrwxrwx  1 root root          26 Feb  1  2024 [36m[1mautomake(B[m ->[8;60H[1K /etc/alternatives/automake
+-rwxr-xr-x  1 root root      262055 Feb  1  2024 [32m[1mautomake-1.(B[m[10;60H[1K[32m[1m16(B[m
+-rwxr-xr-x  1 root root       26934 Jan 14  2023 [32m[1mautoreconf(B[m[1X
+-rwxr-xr-x  1 root root       17177 Jan 14  2023 [32m[1mautoscan(B[m[3X
+-rwxr-xr-x  1 root root       34017 Jan 14  2023 [32m[1mautoupdate(B[m[1X
+lrwxrwxrwx  1 root root          21 Apr  8  2024 [36m[1mawk(B[m -> /etc[15;60H[1K/alternatives/awk
+-rwxr-xr-x  1 root root       55816 Aug 25 15:09 [32m[1mb2sum(B[m[6X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase32(B[m[5X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase64(B[m[5X
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1mbasename(B[m[3X
+-rwxr-xr-x  1 root root       47624 Aug 25 15:09 [32m[1mbasenc(B[m[5X
+-rwxr-xr-x  1 root root     1446024 Mar 31  2024 [32m[1mbash(B[m[7X
+-rwxr-xr-x  1 root root        6988 Mar 31  2024 [32m[1mbashbug(B[m[4X
+-rwxr-xr-x  1 root root       93000 Apr  8  2024 [32m[1mbc(B[m[9X
+-rwxr-xr-x  1 root root       43272 Apr  8  2024 [32m[1mbdftopcf(B[m[3X
+-rwxr-xr-x  1 root root       14488 Apr  8  2024 [32m[1mbdftruncate(B[m
+-rwxr-xr-x  1 root root      504656 Sep 16 13:14 [32m[1mbison(B[m[6X
+-rwxr-xr-x  1 root root        4214 Sep 16 13:14 [32m[1mbison.yacc(B[m[1X
+lrwxrwxrwx  1 root root          27 Mar 30  2024 [36m[1mbugpoint(B[m ->[29;60H[1K ../lib/llvm-18/bin/bugpoint
+lrwxrwxrwx  1 root root          27 May 27  2024 [36m[1mbugpoint-18(B[m
+ -> ../lib/llvm-18/bin/bugpoint[29X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbunzip2(B[m[4X
+-rwxr-xr-x  1 root root       96864 Oct 12 07:36 [32m[1mbusctl(B[m[5X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbzcat(B[m[6X[35;60H[1Kbash-5.2# [1;62Hroot@vm:/home/user/SCRT-Clone/web/tests# ls -la /etc  head [2;62H-40[K[3;62Hls: invalid option -- '4'[K[4;62HTry 'ls --help' for more information.[K[5;62Hroot@vm:/home/user/SCRT-Clone/web/tests# [K[6;62H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2Broot@vm:/home/user/SCRT-Clone/web/tests# top -b -n1  head -[20;62H20[K[21;62Htop: invalid option -- '2'[K[22;62Hroot@vm:/home/user/SCRT-Clone/web/tests# [K[23;62H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[30m[42m
+[0] 0:bash*                                                                                         "vm" 16:02 11-Nov-26(B[m[?12l[?25h[22;103H[?25l[1;61H[32m│[2;61H│[3;61H│[4;61H│[5;61H│[6;61H│[7;61H│[8;61H│[9;61H│[10;61H│[11;61H│[12;61H│[13;61H│[14;61H│[15;61H│[16;61H│[17;61H│[18;61H├[39m───────────────────────────────────────────────────────────[19;61H[32m│[20;61H│[21;61H│[22;61H│[23;61H│[24;61H│[25;61H│[26;61H│[27;61H│[28;61H│[29;61H│[30;61H│[31;61H│[32;61H│[33;61H│[34;61H│[35;61H│(B[m[?12l[?25h[11G[?25l[1;60H[1K[32m[1m[Hize-18(B[m
+-rwxr-xr-x  1 root root       15204 Jan 14  2023 [32m[1mautoconf(B[m[3X
+-rwxr-xr-x  1 root root        9034 Jan 14  2023 [32m[1mautoheader(B[m[1X
+-rwxr-xr-x  1 root root       33475 Jan 14  2023 [32m[1mautom4te(B[m[3X
+lrwxrwxrwx  1 root root          26 Feb  1  2024 [36m[1mautomake(B[m ->[6;60H[1K /etc/alternatives/automake
+-rwxr-xr-x  1 root root      262055 Feb  1  2024 [32m[1mautomake-1.(B[m[8;60H[1K[32m[1m16(B[m
+-rwxr-xr-x  1 root root       26934 Jan 14  2023 [32m[1mautoreconf(B[m[1X
+-rwxr-xr-x  1 root root       17177 Jan 14  2023 [32m[1mautoscan(B[m[3X
+-rwxr-xr-x  1 root root       34017 Jan 14  2023 [32m[1mautoupdate(B[m[1X
+lrwxrwxrwx  1 root root          21 Apr  8  2024 [36m[1mawk(B[m -> /etc[13;60H[1K/alternatives/awk
+-rwxr-xr-x  1 root root       55816 Aug 25 15:09 [32m[1mb2sum(B[m[6X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase32(B[m[5X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase64(B[m[5X
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1mbasename(B[m[3X
+-rwxr-xr-x  1 root root       47624 Aug 25 15:09 [32m[1mbasenc(B[m[5X
+-rwxr-xr-x  1 root root     1446024 Mar 31  2024 [32m[1mbash(B[m[7X
+-rwxr-xr-x  1 root root        6988 Mar 31  2024 [32m[1mbashbug(B[m[4X
+-rwxr-xr-x  1 root root       93000 Apr  8  2024 [32m[1mbc(B[m[9X
+-rwxr-xr-x  1 root root       43272 Apr  8  2024 [32m[1mbdftopcf(B[m[3X
+-rwxr-xr-x  1 root root       14488 Apr  8  2024 [32m[1mbdftruncate(B[m
+-rwxr-xr-x  1 root root      504656 Sep 16 13:14 [32m[1mbison(B[m[6X
+-rwxr-xr-x  1 root root        4214 Sep 16 13:14 [32m[1mbison.yacc(B[m[1X
+lrwxrwxrwx  1 root root          27 Mar 30  2024 [36m[1mbugpoint(B[m ->[27;60H[1K ../lib/llvm-18/bin/bugpoint
+lrwxrwxrwx  1 root root          27 May 27  2024 [36m[1mbugpoint-18(B[m
+ -> ../lib/llvm-18/bin/bugpoint[29X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbunzip2(B[m[4X
+-rwxr-xr-x  1 root root       96864 Oct 12 07:36 [32m[1mbusctl(B[m[5X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbzcat(B[m[6X[33;60H[1Kbash-5.2# echo hello[34;60H[1Khello[35;60H[1K[?12l[?25hbash-5.2# [?25l[32m[1m[Hize-18(B[m[9X[9C                                       [30m[43m[0/48][39m[49m
+-rwxr-xr-x  1 root root       15204 Jan 14  2023 [32m[1mautoconf(B[m[3X
+-rwxr-xr-x  1 root root       [1X[C9034 Jan 14  2023 [32m[1mautoheader(B[m[1X
+-rwxr-xr-x  1 root root       33475 Jan 14  2023 [32m[1mautom4te(B[m[3X
+lrwxrwxrwx  1 root root       [3X[3C26 Feb  1  2024 [36m[1mautomake(B[m ->[6;60H[1K[1K[C/etc/alternatives/automake
+-rwxr-xr-x  1 root root      262055 Feb  1  2024 [32m[1mautomake-1.(B[m[8;60H[1K[32m[1m16(B[m
+-rwxr-xr-x  1 root root       26934 Jan 14  2023 [32m[1mautoreconf(B[m[1X
+-rwxr-xr-x  1 root root       17177 Jan 14  2023 [32m[1mautoscan(B[m[3X
+-rwxr-xr-x  1 root root       34017 Jan 14  2023 [32m[1mautoupdate(B[m[1X
+lrwxrwxrwx  1 root root       [3X[3C21 Apr  8  2024 [36m[1mawk(B[m -> /etc[13;60H[1K/alternatives/awk
+-rwxr-xr-x  1 root root       55816 Aug 25 15:09 [32m[1mb2sum(B[m[6X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase32(B[m[5X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase64(B[m[5X
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1mbasename(B[m[3X
+-rwxr-xr-x  1 root root       47624 Aug 25 15:09 [32m[1mbasenc(B[m[5X
+-rwxr-xr-x  1 root root     1446024 Mar 31  2024 [32m[1mbash(B[m[7X
+-rwxr-xr-x  1 root root       [1X[C6988 Mar 31  2024 [32m[1mbashbug(B[m[4X
+-rwxr-xr-x  1 root root       93000 Apr  8  2024 [32m[1mbc(B[m[9X
+-rwxr-xr-x  1 root root       43272 Apr  8  2024 [32m[1mbdftopcf(B[m[3X
+-rwxr-xr-x  1 root root       14488 Apr  8  2024 [32m[1mbdftruncate(B[m
+-rwxr-xr-x  1 root root      504656 Sep 16 13:14 [32m[1mbison(B[m[6X
+-rwxr-xr-x  1 root root       [1X[C4214 Sep 16 13:14 [32m[1mbison.yacc(B[m[1X
+lrwxrwxrwx  1 root root       [3X[3C27 Mar 30  2024 [36m[1mbugpoint(B[m ->[27;60H[1K[1K[C../lib/llvm-18/bin/bugpoint
+lrwxrwxrwx  1 root root       [3X[3C27 May 27  2024 [36m[1mbugpoint-18(B[m
+[1K[C-> ../lib/llvm-18/bin/bugpoint[29X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbunzip2(B[m[4X
+-rwxr-xr-x  1 root root       96864 Oct 12 07:36 [32m[1mbusctl(B[m[5X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbzcat(B[m[6X[33;60H[1Kbash-5.2# echo hello[34;60H[1Khello[35;60H[1Kbash-5.2# [1;61H[33m│[2;61H│[3;61H│[4;61H│[5;61H│[6;61H│[7;61H│[8;61H│[9;61H│[10;61H│[11;61H│[12;61H│[13;61H│[14;61H│[15;61H│[16;61H│[17;61H│[18;61H├[39m───────────────────────────────────────────────────────────[19;61H[33m│[20;61H│[21;61H│[22;61H│[23;61H│[24;61H│[25;61H│[26;61H│[27;61H│[28;61H│[29;61H│[30;61H│[31;61H│[32;61H│[33;61H│[34;61H│[35;61H│(B[m[?12l[?25h[11G[?25l[1;61H[33m│[2;61H│[3;61H│[4;61H│[5;61H│[6;61H│[7;61H│[8;61H│[9;61H│[10;61H│[11;61H│[12;61H│[13;61H│[14;61H│[15;61H│[16;61H│[17;61H│[18;61H├[39m───────────────────────────────────────────────────────────[19;61H[33m│[20;61H│[21;61H│[22;61H│[23;61H│[24;61H│[25;61H│[26;61H│[27;61H│[28;61H│[29;61H│[30;61H│[31;61H│[32;61H│[33;61H│[34;61H│[35;61H│(B[m[30m[42m
+[0] 0:[tmux]*                                                                                       "vm" 16:02 11-Nov-26(B[m[?12l[?25h[33;21H[?25l[1;60H[1K[32m[1m[Hize-18(B[m
+-rwxr-xr-x  1 root root       15204 Jan 14  2023 [32m[1mautoconf(B[m[3X
+-rwxr-xr-x  1 root root        9034 Jan 14  2023 [32m[1mautoheader(B[m[1X
+-rwxr-xr-x  1 root root       33475 Jan 14  2023 [32m[1mautom4te(B[m[3X
+lrwxrwxrwx  1 root root          26 Feb  1  2024 [36m[1mautomake(B[m ->[6;60H[1K /etc/alternatives/automake
+-rwxr-xr-x  1 root root      262055 Feb  1  2024 [32m[1mautomake-1.(B[m[8;60H[1K[32m[1m16(B[m
+-rwxr-xr-x  1 root root       26934 Jan 14  2023 [32m[1mautoreconf(B[m[1X
+-rwxr-xr-x  1 root root       17177 Jan 14  2023 [32m[1mautoscan(B[m[3X
+-rwxr-xr-x  1 root root       34017 Jan 14  2023 [32m[1mautoupdate(B[m[1X
+lrwxrwxrwx  1 root root          21 Apr  8  2024 [36m[1mawk(B[m -> /etc[13;60H[1K/alternatives/awk
+-rwxr-xr-x  1 root root       55816 Aug 25 15:09 [32m[1mb2sum(B[m[6X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase32(B[m[5X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase64(B[m[5X
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1mbasename(B[m[3X
+-rwxr-xr-x  1 root root       47624 Aug 25 15:09 [32m[1mbasenc(B[m[5X
+-rwxr-xr-x  1 root root     1446024 Mar 31  2024 [32m[1mbash(B[m[7X
+-rwxr-xr-x  1 root root        6988 Mar 31  2024 [32m[1mbashbug(B[m[4X
+-rwxr-xr-x  1 root root       93000 Apr  8  2024 [32m[1mbc(B[m[9X
+-rwxr-xr-x  1 root root       43272 Apr  8  2024 [32m[1mbdftopcf(B[m[3X
+-rwxr-xr-x  1 root root       14488 Apr  8  2024 [32m[1mbdftruncate(B[m
+-rwxr-xr-x  1 root root      504656 Sep 16 13:14 [32m[1mbison(B[m[6X
+-rwxr-xr-x  1 root root        4214 Sep 16 13:14 [32m[1mbison.yacc(B[m[1X
+lrwxrwxrwx  1 root root          27 Mar 30  2024 [36m[1mbugpoint(B[m ->[27;60H[1K ../lib/llvm-18/bin/bugpoint
+lrwxrwxrwx  1 root root          27 May 27  2024 [36m[1mbugpoint-18(B[m
+ -> ../lib/llvm-18/bin/bugpoint[29X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbunzip2(B[m[4X
+-rwxr-xr-x  1 root root       96864 Oct 12 07:36 [32m[1mbusctl(B[m[5X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbzcat(B[m[6X[33;60H[1Kbash-5.2# echo hello[34;60H[1Khello[35;60H[1Kbash-5.2# [1;61H[32m│[2;61H│[3;61H│[4;61H│[5;61H│[6;61H│[7;61H│[8;61H│[9;61H│[10;61H│[11;61H│[12;61H│[13;61H│[14;61H│[15;61H│[16;61H│[17;61H│[18;61H├[39m───────────────────────────────────────────────────────────[19;61H[32m│[20;61H│[21;61H│[22;61H│[23;61H│[24;61H│[25;61H│[26;61H│[27;61H│[28;61H│[29;61H│[30;61H│[31;61H│[32;61H│[33;61H│[34;61H│[35;61H│(B[m[?12l[?25h[11G[?25l[1;61H[32m│[2;61H│[3;61H│[4;61H│[5;61H│[6;61H│[7;61H│[8;61H│[9;61H│[10;61H│[11;61H│[12;61H│[13;61H│[14;61H│[15;61H│[16;61H│[17;61H│[18;61H├[39m───────────────────────────────────────────────────────────[19;61H[32m│[20;61H│[21;61H│[22;61H│[23;61H│[24;61H│[25;61H│[26;61H│[27;61H│[28;61H│[29;61H│[30;61H│[31;61H│[32;61H│[33;61H│[34;61H│[35;61H│(B[m[30m[42m
+[0] 0:bash*                                                                                         "vm" 16:02 11-Nov-26(B[m[?12l[?25h[35;11H[?25l[H-rwxr-xr-x  1 root root       55776 Oct 22  2024 [32m[1mapt-mark(B[m[K
+lrwxrwxrwx  1 root root          19 Feb  9  2026 [36m[1mar(B[m -> x86_64-linux-gnu-ar[K
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1march(B[m[K
+lrwxrwxrwx  1 root root          19 Feb  9  2026 [36m[1mas(B[m -> x86_64-linux-gnu-as[K
+lrwxrwxrwx  1 root root          17 Mar 30  2024 [36m[1masan_symbolize(B[m -> asan_symbolize-18[K
+-rwxr-xr-x  1 root root       42995 May 27  2024 [32m[1masan_symbolize-18(B[m[K
+-rwxr-xr-x  1 root root       15204 Jan 14  2023 [32m[1mautoconf(B[m[K
+-rwxr-xr-x  1 root root        9034 Jan 14  2023 [32m[1mautoheader(B[m[K
+-rwxr-xr-x  1 root root       33475 Jan 14  2023 [32m[1mautom4te(B[m[K
+lrwxrwxrwx  1 root root          26 Feb  1  2024 [36m[1mautomake(B[m -> /etc/alternatives/automake[K
+-rwxr-xr-x  1 root root      262055 Feb  1  2024 [32m[1mautomake-1.16(B[m[K
+-rwxr-xr-x  1 root root       26934 Jan 14  2023 [32m[1mautoreconf(B[m[K
+-rwxr-xr-x  1 root root       17177 Jan 14  2023 [32m[1mautoscan(B[m[K
+-rwxr-xr-x  1 root root       34017 Jan 14  2023 [32m[1mautoupdate(B[m[K
+lrwxrwxrwx  1 root root          21 Apr  8  2024 [36m[1mawk(B[m -> /etc/alternatives/awk[K
+-rwxr-xr-x  1 root root       55816 Aug 25 15:09 [32m[1mb2sum(B[m[K
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase32(B[m[K
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase64(B[m[K
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1mbasename(B[m[K
+-rwxr-xr-x  1 root root       47624 Aug 25 15:09 [32m[1mbasenc(B[m[K
+-rwxr-xr-x  1 root root     1446024 Mar 31  2024 [32m[1mbash(B[m[K
+-rwxr-xr-x  1 root root        6988 Mar 31  2024 [32m[1mbashbug(B[m[K
+-rwxr-xr-x  1 root root       93000 Apr  8  2024 [32m[1mbc(B[m[K
+-rwxr-xr-x  1 root root       43272 Apr  8  2024 [32m[1mbdftopcf(B[m[K
+-rwxr-xr-x  1 root root       14488 Apr  8  2024 [32m[1mbdftruncate(B[m[K
+-rwxr-xr-x  1 root root      504656 Sep 16 13:14 [32m[1mbison(B[m[K
+-rwxr-xr-x  1 root root        4214 Sep 16 13:14 [32m[1mbison.yacc(B[m[K
+lrwxrwxrwx  1 root root          27 Mar 30  2024 [36m[1mbugpoint(B[m -> ../lib/llvm-18/bin/bugpoint[K
+lrwxrwxrwx  1 root root          27 May 27  2024 [36m[1mbugpoint-18(B[m -> ../lib/llvm-18/bin/bugpoint[K
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbunzip2(B[m[K
+-rwxr-xr-x  1 root root       96864 Oct 12 07:36 [32m[1mbusctl(B[m[K
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbzcat(B[m[K
+bash-5.2# echo hello[K
+hello[K
+bash-5.2# [K[30m[42m
+[0] 0:bash*Z                                                                                        "vm" 16:02 11-Nov-26(B[m[?12l[?25h[35;11Hbash-5.2# [K[?25l[1;61H[32m│[2;61H│[3;61H│[4;61H│[5;61H│[6;61H│[7;61H│[8;61H│[9;61H│[10;61H│[11;61H│[12;61H│[13;61H│[14;61H│[15;61H│[16;61H│[17;61H│[18;61H├[39m───────────────────────────────────────────────────────────[19;61H[32m│[20;61H│[21;61H│[22;61H│[23;61H│[24;61H│[25;61H│[26;61H│[27;61H│[28;61H│[29;61H│[30;61H│[31;61H│[32;61H│[33;61H│[34;61H│[35;61H│(B[m[1;60H[1K[32m[1m[Hize-18(B[m
+-rwxr-xr-x  1 root root       15204 Jan 14  2023 [32m[1mautoconf(B[m[3X
+-rwxr-xr-x  1 root root        9034 Jan 14  2023 [32m[1mautoheader(B[m[1X
+-rwxr-xr-x  1 root root       33475 Jan 14  2023 [32m[1mautom4te(B[m[3X
+lrwxrwxrwx  1 root root          26 Feb  1  2024 [36m[1mautomake(B[m ->[6;60H[1K /etc/alternatives/automake
+-rwxr-xr-x  1 root root      262055 Feb  1  2024 [32m[1mautomake-1.(B[m[8;60H[1K[32m[1m16(B[m
+-rwxr-xr-x  1 root root       26934 Jan 14  2023 [32m[1mautoreconf(B[m[1X
+-rwxr-xr-x  1 root root       17177 Jan 14  2023 [32m[1mautoscan(B[m[3X
+-rwxr-xr-x  1 root root       34017 Jan 14  2023 [32m[1mautoupdate(B[m[1X
+lrwxrwxrwx  1 root root          21 Apr  8  2024 [36m[1mawk(B[m -> /etc[13;60H[1K/alternatives/awk
+-rwxr-xr-x  1 root root       55816 Aug 25 15:09 [32m[1mb2sum(B[m[6X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase32(B[m[5X
+-rwxr-xr-x  1 root root       39432 Aug 25 15:09 [32m[1mbase64(B[m[5X
+-rwxr-xr-x  1 root root       35336 Aug 25 15:09 [32m[1mbasename(B[m[3X
+-rwxr-xr-x  1 root root       47624 Aug 25 15:09 [32m[1mbasenc(B[m[5X
+-rwxr-xr-x  1 root root     1446024 Mar 31  2024 [32m[1mbash(B[m[7X
+-rwxr-xr-x  1 root root        6988 Mar 31  2024 [32m[1mbashbug(B[m[4X
+-rwxr-xr-x  1 root root       93000 Apr  8  2024 [32m[1mbc(B[m[9X
+-rwxr-xr-x  1 root root       43272 Apr  8  2024 [32m[1mbdftopcf(B[m[3X
+-rwxr-xr-x  1 root root       14488 Apr  8  2024 [32m[1mbdftruncate(B[m
+-rwxr-xr-x  1 root root      504656 Sep 16 13:14 [32m[1mbison(B[m[6X
+-rwxr-xr-x  1 root root        4214 Sep 16 13:14 [32m[1mbison.yacc(B[m[1X
+lrwxrwxrwx  1 root root          27 Mar 30  2024 [36m[1mbugpoint(B[m ->[27;60H[1K ../lib/llvm-18/bin/bugpoint
+lrwxrwxrwx  1 root root          27 May 27  2024 [36m[1mbugpoint-18(B[m
+ -> ../lib/llvm-18/bin/bugpoint[29X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbunzip2(B[m[4X
+-rwxr-xr-x  1 root root       96864 Oct 12 07:36 [32m[1mbusctl(B[m[5X
+-rwxr-xr-x  3 root root       39296 Aug 27 04:05 [32m[1mbzcat(B[m[6X[33;60H[1Kbash-5.2# echo hello[34;60H[1Khello[35;60H[1Kbash-5.2# [1;62Hroot@vm:/home/user/SCRT-Clone/web/tests# ls -la /etc  head [2;62H-40[K[3;62Hls: invalid option -- '4'[K[4;62HTry 'ls --help' for more information.[K[5;62Hroot@vm:/home/user/SCRT-Clone/web/tests# [K[6;62H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[2Broot@vm:/home/user/SCRT-Clone/web/tests# top -b -n1  head -[20;62H20[K[21;62Htop: invalid option -- '2'[K[22;62Hroot@vm:/home/user/SCRT-Clone/web/tests# [K[23;62H[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K
+[K[30m[42m
+[0] 0:bash*                                                                                         "vm" 16:02 11-Nov-26(B[m[?12l[?25h[35;11Hbash-5.2# [50X[?25l[30m[43m
+:[7m (B[m[30m[43m                                                                                                                      (B[m[36;2H
