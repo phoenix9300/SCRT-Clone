@@ -72,9 +72,8 @@ module.exports = async ({ page, shot, cfg }) => {
   // --- export
   const out = path.join(tmp, 'export.json');
   await menu('Export Sessions');
-  const pp = page.locator('.dialog').last().locator('input[aria-label="Path"]');
-  await pp.fill(tmp); await pp.press('Enter'); await page.waitForTimeout(600);
-  await page.locator('.dialog').last().locator('input:not([aria-label="Path"])').last().fill('export.json');
+  // a name containing a path separator is taken as the full destination
+  await page.locator('.dialog').last().locator('input:not([aria-label="Path"])').last().fill(out);
   await page.locator('.dialog').last().locator('button.primary').click();
   await page.waitForSelector('text=Exported 2 sessions');
   const ex = JSON.parse(fs.readFileSync(out, 'utf8'));

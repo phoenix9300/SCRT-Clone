@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit -p .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "for s in local options tools sftp; do node e2e/run.cjs $s || exit 1; done"
+    "e2e": "for s in local options tools sftp script; do node e2e/run.cjs $s || exit 1; done"
   },
   "dependencies": {
     "@fontsource/jetbrains-mono": "^5.3.0",

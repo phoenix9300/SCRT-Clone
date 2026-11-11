@@ -10,9 +10,10 @@ import {
   setGlobal, ui, useApp,
 } from "../state/store";
 import { emulationById } from "../term/emulation";
-import { buildMenus, cmd, runShortcut, terminalContextMenu } from "./commands";
+import { buildMenus, cmd, printText, runShortcut, terminalContextMenu } from "./commands";
 import { confirm, openQuickConnect, promptText } from "./dialogs";
 import { feature, tabViews } from "./features";
+import { pickPath } from "./filePicker";
 import { MenuItem, PopupMenu } from "./kit";
 import { comboName, keyInfo } from "../term/keyboard";
 
@@ -467,6 +468,12 @@ export function Workbench() {
   useEffect(() => {
     ui.shortcut = (combo, e, c) => runShortcut(combo, e, c);
     ui.contextMenu = (e) => showMenu(e, terminalContextMenu());
+    // printer pass-through from the host: print dialog, save to a file, or drop
+    ui.print = (text) => {
+      const mode = activeController()?.opts.terminal.printer ?? "dialog";
+      if (mode === "dialog") printText(text);
+      else if (mode === "file") pickPath({ mode: "save", title: "Save Printer Output", defaultName: "print.txt" }).then((p) => p && rpc.call("fs.writeText", { path: p, data: text }).catch(fail));
+    };
     // shortcuts also work when focus is outside a terminal
     const onKey = (e: KeyboardEvent) => {
       if (getApp().dialogs.length || (e.target as HTMLElement).closest?.(".term-root")) return;

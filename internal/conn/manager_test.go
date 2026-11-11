@@ -105,3 +105,49 @@ func TestLocalShell(t *testing.T) {
 	c.Input([]byte("exit\n"))
 	waitState(t, c, StateDisconnected)
 }
+
+func TestLogonActionsAndAntiIdle(t *testing.T) {
+	m, sink := newTestManager(t)
+	ov := map[string]any{
+		"protocol": "local", "local": map[string]any{"shell": "/bin/sh", "env": map[string]any{"PS1": "$ "}},
+		"logon": map[string]any{"enabled": true, "timeout": 5, "actions": []any{
+			map[string]any{"expect": "$ ", "send": "echo logon-$((3+4))\\r"},
+			map[string]any{"expect": "logon-7", "send": "echo second-step\\r"},
+		}},
+		"terminal": map[string]any{"antiIdle": map[string]any{"enabled": true, "interval": 1, "text": "echo idle-$((1+1))\\r"}},
+	}
+	c, err := m.Open(OpenRequest{Overrides: ov, Cols: 80, Rows: 24}, sink)
+	if err != nil {
+		t.Fatal(err)
+	}
+	waitState(t, c, StateConnected)
+	pos := expect(t, c, 0, "logon-7")
+	pos = expect(t, c, pos, "second-step\r\n")
+	// with no keyboard input the anti-idle string is sent after the interval
+	expect(t, c, pos, "idle-2")
+}
+
+func TestRecorderGeneratesScripts(t *testing.T) {
+	m, sink := newTestManager(t)
+	c, err := m.Open(OpenRequest{Overrides: map[string]any{"protocol": "local", "local": map[string]any{"shell": "/bin/sh", "env": map[string]any{"PS1": "$ "}}}, Cols: 80, Rows: 24}, sink)
+	if err != nil {
+		t.Fatal(err)
+	}
+	waitState(t, c, StateConnected)
+	expect(t, c, 0, "$ ")
+	c.StartRecording()
+	c.Input([]byte("echo \"hi\"\r"))
+	expect(t, c, 0, "hi\r\n")
+	steps := c.StopRecording()
+	if len(steps) != 1 || !strings.HasSuffix(steps[0].Expect, "$ ") || steps[0].Send != "echo \"hi\"\r" {
+		t.Fatalf("recorded steps: %+v", steps)
+	}
+	py := GenerateScript(steps, "python")
+	if !strings.Contains(py, `crt.Screen.WaitForString("$ ")`) || !strings.Contains(py, `crt.Screen.Send("echo \"hi\"\r")`) {
+		t.Fatalf("python script:\n%s", py)
+	}
+	vb := GenerateScript(steps, "vbscript")
+	if !strings.Contains(vb, `crt.Screen.Send "echo ""hi""" & vbCr`) {
+		t.Fatalf("vbscript:\n%s", vb)
+	}
+}

@@ -23,7 +23,7 @@ function download(name: string, text: string): void {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-function printText(text: string): void {
+export function printText(text: string): void {
   const w = window.open("", "_blank", "width=800,height=600");
   if (!w) return void toast("The print window was blocked.", "error");
   w.document.title = "Hawser print";
