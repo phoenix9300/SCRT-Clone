@@ -1,7 +1,7 @@
 // File chooser backed by the engine's view of the local file system (the
 // browser cannot see real paths, the engine can).
 import { ArrowUp, File as FileIcon, Folder, Home } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { rpc } from "../rpc";
 import { getApp, showDialog } from "../state/store";
 import { Button, Dialog, Text } from "./kit";
@@ -45,10 +45,17 @@ function Picker({ o, close }: { o: PickOptions; close: (v?: string[]) => void })
   const [name, setName] = useState(o.defaultName ?? "");
   const [pathText, setPathText] = useState("");
   const [all, setAll] = useState(!o.filter?.length);
-  const load = (d: string) => rpc.call("fs.list", { path: d }).then((r) => {
-    setEntries(r.entries ?? []); setError(r.error ?? ""); setParent(r.parent ?? "");
-    if (!r.error) { setDir(r.path); setPathText(r.path); lastDir = r.path; setSel(new Set()); }
-  }).catch((e) => setError(String(e.message)));
+  const seq = useRef(0);
+  const typed = useRef(false); // the user edited the path box while a listing was in flight
+  const load = (d: string) => {
+    const mine = ++seq.current; // ignore answers that arrive after a newer request
+    typed.current = false;
+    return rpc.call("fs.list", { path: d }).then((r) => {
+      if (mine !== seq.current) return;
+      setEntries(r.entries ?? []); setError(r.error ?? ""); setParent(r.parent ?? "");
+      if (!r.error) { setDir(r.path); if (!typed.current) setPathText(r.path); lastDir = r.path; setSel(new Set()); }
+    }).catch((e) => mine === seq.current && setError(String(e.message)));
+  };
   useEffect(() => { load(dir); }, []);
   const shown = entries.filter((e) => e.dir || (o.mode !== "folder" && (all || o.filter!.some((f) => e.name.toLowerCase().endsWith(f)))));
   const join = (n: string) => (dir.endsWith(sep) ? dir + n : dir + sep + n);
@@ -74,7 +81,7 @@ function Picker({ o, close }: { o: PickOptions; close: (v?: string[]) => void })
       <div className="row" style={{ padding: "10px 12px 6px" }}>
         <button className="tb-btn" title="Parent folder" onClick={() => parent && load(parent)}><ArrowUp size={16} /></button>
         <button className="tb-btn" title="Home" onClick={() => load("~")}><Home size={16} /></button>
-        <input className="input grow mono" value={pathText} aria-label="Path" onChange={(e) => setPathText(e.target.value)}
+        <input className="input grow mono" value={pathText} aria-label="Path" onChange={(e) => { typed.current = true; setPathText(e.target.value); }}
           onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); e.preventDefault(); load(pathText); } }} />
       </div>
       {error && <div className="error-text" style={{ padding: "0 14px 6px" }}>{error}</div>}

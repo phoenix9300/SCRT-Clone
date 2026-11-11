@@ -48,6 +48,7 @@ function App() {
 (window as any).__hawser = {
   screen: () => activeController()?.term.screenText() ?? [],
   ctrl: () => activeController(),
+  rpc: (method: string, params?: unknown) => rpc.call(method, params),
 };
 
 createRoot(document.getElementById("root")!).render(<App />);
