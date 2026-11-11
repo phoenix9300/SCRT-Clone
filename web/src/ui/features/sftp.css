@@ -1,0 +1,39 @@
+.sftp { display: flex; flex-direction: column; height: 100%; min-width: 0; background: var(--bg); }
+.sftp-bar { display: flex; align-items: center; gap: 8px; padding: 4px 8px; background: var(--panel); border-bottom: 1px solid var(--border); flex: none; flex-wrap: wrap; }
+.sftp-bar .lbl { color: var(--dim); font-size: 12px; }
+.sftp-closed { padding: 6px 10px; background: color-mix(in srgb, var(--danger) 18%, var(--panel)); color: var(--danger); border-bottom: 1px solid var(--border); flex: none; }
+.sftp-panes { display: flex; flex: 1; min-height: 0; }
+.sftp-pane { flex: 1; min-width: 0; display: flex; flex-direction: column; border-right: 1px solid var(--border); outline: 0; }
+.sftp-pane:last-child { border-right: 0; }
+.sftp-pane.drop { box-shadow: inset 0 0 0 2px var(--accent); }
+.sftp-pane > header { display: flex; align-items: center; gap: 2px; padding: 4px 6px; background: var(--panel); border-bottom: 1px solid var(--border); }
+.sftp-pane > header .title { font-size: 11px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); padding: 0 6px; }
+.sftp-pane > header .input { flex: 1; min-width: 0; font-family: var(--mono); font-size: 12px; }
+.sftp-err { padding: 4px 10px; color: var(--danger); font-size: 12px; }
+.sftp-scroll { flex: 1; overflow: auto; min-height: 0; }
+.sftp-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.sftp-table th { position: sticky; top: 0; z-index: 1; text-align: left; font-weight: 600; font-size: 12px; color: var(--dim); padding: 3px 8px; background: var(--panel); border-bottom: 1px solid var(--border); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sftp-table th:hover { color: var(--text); }
+.sftp-table td { padding: 2px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; height: 24px; }
+.sftp-table td.num { text-align: right; color: var(--dim); }
+.sftp-table td.dim { color: var(--dim); }
+.sftp-table td.mono { font-family: var(--mono); font-size: 12px; }
+.sftp-table tr.sel td { background: var(--accent-soft); }
+.sftp-table tr.cur td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+.sftp-table tbody tr:hover td { background: var(--hover); }
+.sftp-table tr.sel:hover td { background: var(--accent-soft); }
+.sftp-table .nm { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.sftp-table .nm svg { flex: none; color: var(--dim); }
+.sftp-table .nm .dir { color: var(--accent); }
+.sftp-table .nm span { overflow: hidden; text-overflow: ellipsis; }
+.sftp-queue { flex: none; height: 170px; display: flex; flex-direction: column; border-top: 1px solid var(--border); background: var(--panel); }
+.sftp-queue > header { display: flex; align-items: center; gap: 8px; padding: 3px 8px; border-bottom: 1px solid var(--border); font-size: 11px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); }
+.sftp-job { display: grid; grid-template-columns: minmax(80px, 1.4fr) 70px 80px minmax(80px, 1fr) minmax(90px, 1.3fr) 24px; gap: 8px; align-items: center; padding: 3px 8px; font-size: 12px; border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent); }
+.sftp-job > * { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sftp-job .bar { height: 6px; border-radius: 3px; background: var(--bg); overflow: hidden; }
+.sftp-job .bar i { display: block; height: 100%; background: var(--accent); }
+.sftp-job.error .bar i { background: var(--danger); }
+.sftp-job .st-error { color: var(--danger); }
+.sftp-job .st-done { color: var(--ok); }
+.sftp-perm { display: grid; grid-template-columns: auto repeat(3, 1fr); gap: 6px 14px; align-items: center; margin-bottom: 10px; }
+.sftp-edit { width: 100%; height: 100%; min-height: 300px; box-sizing: border-box; white-space: pre; overflow: auto; resize: none; }

@@ -65,9 +65,9 @@ function functionKey(n: number, k: KeyInfo, s: KeyState): string | null {
     case "vt100":
     case "vt220":
       if (s.vt52 && n <= 4) return ESC + "PQRS"[n - 1];
-      if (n <= 4) return SS3 + "PQRS"[n - 1];
       // Shift+F1..F10 reach F11..F20 on keyboards without those keys
-      if (k.shift && n <= 10) return CSI + FKEY_TILDE[n + 10] + "~";
+      if (k.shift && n <= 10 && s.family === "vt220") return CSI + FKEY_TILDE[n + 10] + "~";
+      if (n <= 4) return SS3 + "PQRS"[n - 1];
       return FKEY_TILDE[n] ? CSI + FKEY_TILDE[n] + "~" : null;
   }
   // xterm (and linux F6+)

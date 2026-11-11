@@ -1,0 +1,30 @@
+.opt-dialog .page { padding: 14px 18px; }
+.opt-dialog .page h3 { margin: 0 0 12px; font-size: 15px; font-weight: 650; }
+.opt-dialog .field { grid-template-columns: 170px minmax(0, 1fr); }
+.opt-dialog .field .hint { grid-column: 2; }
+.opt-dialog .check { margin-bottom: 6px; }
+.opt-dialog .hint-block { color: var(--faint); font-size: 12px; margin: 2px 0 10px; }
+.opt-nav-title { padding: 8px 10px 2px; font-size: 11px; color: var(--faint); text-transform: uppercase; letter-spacing: .06em; }
+.opt-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.opt-list .row { gap: 6px; }
+.opt-box { border: 1px solid var(--border); border-radius: 5px; background: var(--bg); padding: 4px; max-height: 190px; overflow-y: auto; }
+.opt-box label { display: flex; align-items: center; gap: 8px; padding: 2px 6px; border-radius: 3px; cursor: pointer; }
+.opt-box label:hover { background: var(--hover); }
+.opt-box input { accent-color: var(--accent); }
+.opt-box .bad { color: var(--warn); }
+.opt-swatch { display: inline-flex; vertical-align: middle; border: 1px solid var(--border); border-radius: 3px; overflow: hidden; margin-right: 8px; }
+.opt-swatch i { display: block; width: 8px; height: 14px; }
+input[type=color].opt-color { width: 34px; height: 26px; padding: 1px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg); cursor: pointer; }
+.opt-grid-scroll { overflow-x: auto; max-width: 100%; }
+.opt-colors { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 12px; margin: 6px 0 12px; }
+.opt-colors label { display: flex; align-items: center; gap: 6px; color: var(--dim); font-size: 12px; }
+.opt-split { display: flex; gap: 14px; min-height: 0; flex: 1; }
+.opt-split > .opt-side { width: 210px; flex: none; display: flex; flex-direction: column; gap: 6px; }
+.opt-split > .opt-main { flex: 1; min-width: 0; overflow-y: auto; }
+.opt-split ul { list-style: none; margin: 0; padding: 4px; border: 1px solid var(--border); border-radius: 5px; background: var(--bg); overflow-y: auto; flex: 1; }
+.opt-split li { padding: 4px 8px; border-radius: 4px; cursor: default; }
+.opt-split li:hover { background: var(--hover); }
+.opt-split li.sel { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.opt-body { padding: 14px 16px; display: flex; flex-direction: column; min-height: 0; flex: 1; overflow: auto; }
+.opt-capture { cursor: pointer; }
+.opt-capture.capturing td { background: var(--accent-soft); }

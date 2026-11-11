@@ -11,6 +11,7 @@ import { Charset, DEC_SPECIAL, Decoder, charsetFor, cp437, createDecoder } from 
 import { Emulation, EmulationId, emulationById } from "./emulation";
 import { Params, Parser, ParserHandler } from "./parser";
 import { wcwidth } from "./wcwidth";
+import { WyseDialect } from "./wyse";
 
 export interface TerminalOptions {
   cols: number;
@@ -201,12 +202,23 @@ export class Terminal implements ParserHandler {
     this.autoWrap = this.options.autoWrap;
     this.parser.c1 = this.options.c1Controls;
     this.parser.linuxOsc = this.emulation.id === "linux";
+    this.installDialect();
+  }
+
+  private installDialect(): void {
+    if (this.emulation.dialect === "wyse") {
+      this.dialectHandler = new WyseDialect(this, this.emulation.id === "wyse60" ? 60 : 50);
+    } else {
+      this.dialectHandler = null;
+      this.parser.vt52 = this.vt52;
+    }
   }
 
   setEmulation(id: EmulationId): void {
     this.options.emulation = id;
     this.emulation = emulationById(id);
     this.parser.linuxOsc = id === "linux";
+    this.installDialect();
     this.onModeChange();
   }
 
@@ -900,8 +912,8 @@ export class Terminal implements ParserHandler {
     this.modifyOtherKeys = 0;
     this.backarrowSendsBS = null;
     this.vt52 = false;
-    this.parser.vt52 = false;
     this.parser.reset();
+    this.installDialect();
     this.decoder.reset();
     this.printerMode = 0;
     this.printBuf = [];

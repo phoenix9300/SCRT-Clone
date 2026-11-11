@@ -39,4 +39,5 @@ func (e *extensions) close() {
 
 func (s *Server) registerExtensions() {
 	s.registerKeys()
+	s.registerTools()
 }
