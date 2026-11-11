@@ -230,7 +230,30 @@ func (c *Conn) checkZmodem(p []byte) (rest []byte, handled bool) {
 // pendingUploads holds diverted sessions waiting for the user to pick files.
 var pendingUploads sync.Map // conn id -> chan []string
 
+// QueueZmodemUpload registers files to send automatically the next time the
+// remote side starts a ZMODEM receive (scripts: crt.FileTransfer).
+func (c *Conn) QueueZmodemUpload(files []string) {
+	c.mu.Lock()
+	c.zqueue = append(c.zqueue, files...)
+	c.mu.Unlock()
+}
+
+// ClearZmodemUpload empties the queued upload list.
+func (c *Conn) ClearZmodemUpload() {
+	c.mu.Lock()
+	c.zqueue = nil
+	c.mu.Unlock()
+}
+
 func (c *Conn) zmodemUploadPrompt(d *diverter) {
+	c.mu.Lock()
+	queued := c.zqueue
+	c.zqueue = nil
+	c.mu.Unlock()
+	if len(queued) > 0 {
+		c.runTransfer(d, "zmodem", "upload", queued, nil)
+		return
+	}
 	ch := make(chan []string, 1)
 	pendingUploads.Store(c.ID, ch)
 	defer pendingUploads.Delete(c.ID)

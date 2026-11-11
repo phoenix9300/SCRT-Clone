@@ -45,7 +45,10 @@ type Manager struct {
 	conns  map[uint32]*Conn
 	nextID uint32
 	sinks  map[Sink]struct{}
-	// OnOutputHook, when set, observes connection lifecycle for scripting.
+
+	// OnConnected, when set, is called (in its own goroutine) each time a
+	// session reaches the connected state; used to start logon scripts.
+	OnConnected func(c *Conn)
 }
 
 // NewManager creates a connection manager.
@@ -259,6 +262,7 @@ type Conn struct {
 
 	// OutputTap, when non-nil, sees all terminal output (used by transfers).
 	zdetect zmodemDetector
+	zqueue  []string
 }
 
 // Info is the externally visible state of a connection.
@@ -427,6 +431,9 @@ func (c *Conn) connect(parent *Conn) {
 		c.startAutoLog()
 		go c.antiIdleLoop(t, stop)
 		go c.runLogonActions(stop)
+		if hook := c.mgr.OnConnected; hook != nil {
+			go hook(c)
+		}
 		c.readLoop(t, gen)
 	}()
 }
@@ -550,6 +557,45 @@ func (c *Conn) Reconnect() {
 		}
 		c.connect(nil)
 	}
+}
+
+// Retarget points a disconnected connection at another session or ad-hoc
+// target (used by scripts: crt.Session.Connect). Call Reconnect afterwards.
+func (m *Manager) Retarget(c *Conn, req OpenRequest) error {
+	if c.State() != StateDisconnected {
+		return errors.New("the session is still connected")
+	}
+	var ov map[string]any
+	if req.SessionPath != "" {
+		var err error
+		if ov, err = m.Store.Overrides(req.SessionPath); err != nil {
+			return err
+		}
+		if req.Overrides != nil {
+			deepMergeAny(ov, req.Overrides)
+		}
+	} else {
+		ov = req.Overrides
+	}
+	opts, err := m.Store.Resolve(ov)
+	if err != nil {
+		return err
+	}
+	c.mu.Lock()
+	c.opts = opts
+	c.SessionPath = req.SessionPath
+	c.overrides = req.Overrides
+	c.password = req.Password
+	if req.Title != "" {
+		c.Title = req.Title
+	} else if req.SessionPath != "" {
+		c.Title = req.SessionPath[strings.LastIndexByte(req.SessionPath, '/')+1:]
+	} else {
+		c.Title = Target(opts)
+	}
+	c.mu.Unlock()
+	c.connect(nil)
+	return nil
 }
 
 // Disconnect closes the transport but keeps the tab.

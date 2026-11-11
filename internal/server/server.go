@@ -16,6 +16,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 	"sync"
@@ -41,6 +42,9 @@ type Server struct {
 	// AllowRemote disables the loopback Origin restriction (the token is
 	// still required).
 	AllowRemote bool
+	// UIDir, when set, serves the UI from a directory instead of the
+	// embedded bundle (development).
+	UIDir string
 	// Startup lists actions the UI should perform once it is ready
 	// (sessions to open, scripts to run) – from the command line.
 	Startup []map[string]any
@@ -64,6 +68,7 @@ func New(st *store.Store) *Server {
 	s.handlers = map[string]handler{}
 	s.registerCore()
 	s.registerExtensions()
+	s.registerScripts()
 	return s
 }
 
@@ -95,6 +100,9 @@ func (s *Server) Serve() error {
 	mux.HandleFunc("/api/file", s.handleFile)
 	mux.HandleFunc("/api/open", s.handleOpen)
 	ui, built := webui.FS()
+	if s.UIDir != "" {
+		ui, built = os.DirFS(s.UIDir), true
+	}
 	fileServer := http.FileServer(http.FS(ui))
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("X-Content-Type-Options", "nosniff")

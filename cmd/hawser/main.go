@@ -47,6 +47,7 @@ Options:
   --allow-remote       accept UI connections from other hosts (token still required)
   --script FILE        run a script once the UI is ready
   --arg VALUE          argument passed to the script (repeatable)
+  --ui-dir DIR         serve the UI from DIR instead of the built-in bundle (development)
   --new-instance       do not hand targets to an already running Hawser
   --version            print the version and exit
 
@@ -61,6 +62,7 @@ type options struct {
 	configDir   string
 	allowRemote bool
 	newInstance bool
+	uiDir       string
 	startup     []map[string]any
 }
 
@@ -120,6 +122,8 @@ func parseArgs(args []string) (*options, error) {
 			o.configDir, err = next(&i, a)
 		case "--allow-remote":
 			o.allowRemote = true
+		case "--ui-dir":
+			o.uiDir, err = next(&i, a)
 		case "--new-instance":
 			o.newInstance = true
 		case "--script":
@@ -350,6 +354,7 @@ func main() {
 
 	srv := server.New(st)
 	srv.AllowRemote = opts.allowRemote
+	srv.UIDir = opts.uiDir
 	srv.Startup = opts.startup
 	base, err := srv.Listen(opts.listen)
 	if err != nil {

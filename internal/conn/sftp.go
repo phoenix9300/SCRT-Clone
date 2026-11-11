@@ -295,8 +295,8 @@ func (s *SFTPSession) WriteFile(p string, data []byte) error {
 
 // ----------------------------------------------------------------- jobs
 
-// SFTPJob is a queued upload or download (files or whole directory trees).
-type SFTPJob struct {
+// SFTPJobInfo is the externally visible state of a transfer.
+type SFTPJobInfo struct {
 	ID        string `json:"id"`
 	Session   uint32 `json:"session"`
 	Direction string `json:"direction"` // upload | download
@@ -314,6 +314,11 @@ type SFTPJob struct {
 	Finished  int64  `json:"finished,omitempty"`
 	// Conflict: overwrite | skip | resume
 	Conflict string `json:"conflict"`
+}
+
+// SFTPJob is a queued upload or download (files or whole directory trees).
+type SFTPJob struct {
+	SFTPJobInfo
 
 	cancel   context.CancelFunc
 	lastSent time.Time
@@ -322,12 +327,10 @@ type SFTPJob struct {
 
 var jobSeq atomic.Uint64
 
-func (j *SFTPJob) snapshot() SFTPJob {
+func (j *SFTPJob) snapshot() SFTPJobInfo {
 	j.mu.Lock()
 	defer j.mu.Unlock()
-	return SFTPJob{ID: j.ID, Session: j.Session, Direction: j.Direction, Local: j.Local, Remote: j.Remote, Name: j.Name,
-		State: j.State, Error: j.Error, Size: j.Size, Done: j.Done, Files: j.Files, FilesDone: j.FilesDone,
-		Current: j.Current, Started: j.Started, Finished: j.Finished, Conflict: j.Conflict}
+	return j.SFTPJobInfo
 }
 
 // Enqueue schedules a transfer. local/remote are full paths of the source
@@ -343,8 +346,8 @@ func (s *SFTPSession) Enqueue(direction, local, remote, conflict string) (*SFTPJ
 	if direction == "download" {
 		name = path.Base(remote)
 	}
-	j := &SFTPJob{ID: fmt.Sprintf("j%d", jobSeq.Add(1)), Session: s.ID, Direction: direction, Local: local, Remote: remote,
-		Name: name, State: "queued", Conflict: conflict}
+	j := &SFTPJob{SFTPJobInfo: SFTPJobInfo{ID: fmt.Sprintf("j%d", jobSeq.Add(1)), Session: s.ID, Direction: direction, Local: local, Remote: remote,
+		Name: name, State: "queued", Conflict: conflict}}
 	s.jobsMu.Lock()
 	s.jobs[j.ID] = j
 	s.jobsMu.Unlock()
@@ -358,10 +361,10 @@ func (s *SFTPSession) Enqueue(direction, local, remote, conflict string) (*SFTPJ
 }
 
 // Jobs lists the session's transfers.
-func (s *SFTPSession) Jobs() []SFTPJob {
+func (s *SFTPSession) Jobs() []SFTPJobInfo {
 	s.jobsMu.Lock()
 	defer s.jobsMu.Unlock()
-	out := make([]SFTPJob, 0, len(s.jobs))
+	out := make([]SFTPJobInfo, 0, len(s.jobs))
 	for _, j := range s.jobs {
 		out = append(out, j.snapshot())
 	}

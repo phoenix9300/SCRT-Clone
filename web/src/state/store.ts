@@ -392,6 +392,13 @@ export async function boot(): Promise<void> {
   applyGlobal();
 
   rpc.on("conn.state", onConnState);
+  // a tab opened by the engine (scripts: ConnectInTab, Clone)
+  rpc.on("conn.opened", (info: ConnInfo) => {
+    if (!tabByConn(info.id)) {
+      adopt(info);
+      rpc.call<ConnInfo>("conn.info", { id: info.id }).then(onConnState).catch(() => {});
+    }
+  });
   rpc.on("conn.closed", (d) => {
     const tab = tabByConn(d.id);
     if (tab) removeTab(tab.id);
