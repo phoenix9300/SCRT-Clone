@@ -16,6 +16,7 @@ class Rpc {
   private aborts = new Map<number, AbortController>();
   private dataHandlers = new Map<number, (p: Uint8Array) => void>();
   private queue: (string | Uint8Array)[] = [];
+  private orphans = new Map<number, Uint8Array[]>();
   token = "";
   connected = false;
   onStatus: (connected: boolean, reason?: string) => void = () => {};
@@ -69,7 +70,14 @@ class Rpc {
       const b = new Uint8Array(data);
       if (b.length >= 5 && b[0] === FRAME_OUTPUT) {
         const id = ((b[1] << 24) | (b[2] << 16) | (b[3] << 8) | b[4]) >>> 0;
-        this.dataHandlers.get(id)?.(b.subarray(5));
+        const h = this.dataHandlers.get(id);
+        if (h) h(b.subarray(5));
+        else {
+          // output for a connection whose tab is still being created
+          let q = this.orphans.get(id);
+          if (!q) this.orphans.set(id, (q = []));
+          if (q.length < 4096) q.push(b.slice(5));
+        }
       }
       return;
     }
@@ -130,8 +138,15 @@ class Rpc {
   }
 
   onData(connId: number, h: ((p: Uint8Array) => void) | null): void {
-    if (h) this.dataHandlers.set(connId, h);
-    else this.dataHandlers.delete(connId);
+    if (h) {
+      this.dataHandlers.set(connId, h);
+      const q = this.orphans.get(connId);
+      this.orphans.delete(connId);
+      q?.forEach((p) => h(p));
+    } else {
+      this.dataHandlers.delete(connId);
+      this.orphans.delete(connId);
+    }
   }
 
   sendInput(connId: number, data: Uint8Array): void {

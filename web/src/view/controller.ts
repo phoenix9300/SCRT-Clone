@@ -581,7 +581,7 @@ export class TerminalController {
     if ((link?.url ?? "") + (link?.line ?? "") !== (this.hoverLink?.url ?? "") + (this.hoverLink?.line ?? "")) {
       this.hoverLink = link;
       this.root!.style.cursor = link ? "pointer" : "";
-      this.renderer.invalidate();
+      this.renderer?.invalidate();
       this.schedule();
     }
   }
@@ -652,12 +652,13 @@ export class TerminalController {
   private syncSelection(): void {
     const a = this.selAnchor;
     const h = this.selHead;
+    if (!this.renderer) return;
     if (!a || !h) this.renderer.selection = null;
     else {
       const [s, e] = comparePos(a, h) <= 0 ? [a, h] : [h, a];
       this.renderer.selection = { startLine: s.line, startCol: s.col, endLine: e.line, endCol: e.col, block: this.selMode === "block" };
     }
-    this.renderer.invalidate();
+    this.renderer?.invalidate();
     this.schedule();
   }
 
@@ -714,7 +715,7 @@ export class TerminalController {
   setSearch(query: string, o: SearchOptions): boolean {
     this.searchRe = buildSearch(query, o);
     this.currentMatch = null;
-    this.renderer.invalidate();
+    this.renderer?.invalidate();
     this.schedule();
     return !!this.searchRe || !query;
   }
@@ -735,7 +736,7 @@ export class TerminalController {
         buf.scrollOffset = buf.lines.length - this.term.rows - top;
       }
     }
-    this.renderer.invalidate();
+    this.renderer?.invalidate();
     this.schedule();
     return !!m;
   }
