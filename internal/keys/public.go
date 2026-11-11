@@ -460,13 +460,13 @@ func publicKeyBits(blob []byte) int {
 			return 0
 		}
 		return p.BitLen()
-	case ssh.KeyAlgoECDSA256, ssh.KeyAlgoSKECDSA256:
+	case ssh.KeyAlgoECDSA256, ssh.KeyAlgoSKECDSA256, "sk-ecdsa-sha2-nistp256":
 		return 256
 	case ssh.KeyAlgoECDSA384:
 		return 384
 	case ssh.KeyAlgoECDSA521:
 		return 521
-	case ssh.KeyAlgoED25519, ssh.KeyAlgoSKED25519:
+	case ssh.KeyAlgoED25519, ssh.KeyAlgoSKED25519, "sk-ssh-ed25519":
 		return 256
 	case "ssh-ed448":
 		return 448
@@ -505,9 +505,10 @@ func HostKeyAlgorithmDisplay(algo string) string {
 		name = "ED25519"
 	case "ssh-ed448":
 		name = "ED448"
-	case ssh.KeyAlgoSKECDSA256, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com":
+	case ssh.KeyAlgoSKECDSA256, "webauthn-sk-ecdsa-sha2-nistp256@openssh.com", "sk-ecdsa-sha2-nistp256":
+		// The last form is what remains of the certificate type name.
 		name = "ECDSA-SK"
-	case ssh.KeyAlgoSKED25519:
+	case ssh.KeyAlgoSKED25519, "sk-ssh-ed25519":
 		name = "ED25519-SK"
 	case "ssh-xmss@openssh.com":
 		name = "XMSS"

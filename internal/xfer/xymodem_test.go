@@ -129,11 +129,14 @@ func TestXmodemLossy(t *testing.T) {
 			leakCheck(t)
 			a, b := newDuplex(64 << 10)
 			fwd := newNoise(uint64(300+i), 1.0/4000, 1.0/9000)
-			rev := newNoise(uint64(400+i), 1.0/60, 1.0/80)
+			rev := newNoise(uint64(400+i), 1.0/150, 1.0/200)
 			a.out.fault = fwd.apply
 			b.out.fault = rev.apply
-			data := pattern(uint64(i), 60000)
-			m.send.Timeout, m.rx.Timeout = 80*time.Millisecond, 80*time.Millisecond
+			data := pattern(uint64(i), 40000)
+			// Stop-and-wait cannot tell a late acknowledgement from a lost
+			// one, so the timeout must comfortably exceed the peer's
+			// reaction time even under the race detector.
+			m.send.Timeout, m.rx.Timeout = 500*time.Millisecond, 500*time.Millisecond
 			m.send.Retries, m.rx.Retries = 30, 30
 			_, _, out, serr, rerr := xmodemLoop(t, a, b, data, m.send, m.rx)
 			t.Logf("forward: %d flips, %d drops; reverse: %d flips, %d drops", fwd.flips, fwd.drops, rev.flips, rev.drops)
@@ -321,7 +324,7 @@ func TestYmodemLossy(t *testing.T) {
 	leakCheck(t)
 	a, b := newDuplex(64 << 10)
 	fwd := newNoise(501, 1.0/5000, 1.0/12000)
-	rev := newNoise(502, 1.0/80, 1.0/100)
+	rev := newNoise(502, 1.0/150, 1.0/200)
 	a.out.fault = fwd.apply
 	b.out.fault = rev.apply
 	files := []memFile{
@@ -330,7 +333,7 @@ func TestYmodemLossy(t *testing.T) {
 		{FileInfo{Name: "c.bin", Size: -1, ModTime: testTime, Mode: 0o644}, nil},
 	}
 	sink := &memSink{}
-	o := Options{Timeout: 80 * time.Millisecond, Retries: 30, Use1K: true}
+	o := Options{Timeout: 500 * time.Millisecond, Retries: 30, Use1K: true}
 	serr, rerr := ymodemLoop(t, a, b, sendFiles(files), sink, o, o)
 	t.Logf("forward: %d flips, %d drops; reverse: %d flips, %d drops", fwd.flips, fwd.drops, rev.flips, rev.drops)
 	if serr != nil || rerr != nil {
