@@ -373,20 +373,37 @@ func main() {
 
 	fmt.Printf("Hawser %s\n  UI:     %s\n  Config: %s\n", server.Version, uiURL, st.Dir)
 
+	// The browser is started on a private page that forwards to the UI, so the
+	// access token never appears in a process command line that other local
+	// users could read.
+	launchURL := uiURL
+	launchPath := filepath.Join(st.Dir, "launch.html")
+	page := fmt.Sprintf("<!doctype html><meta charset=\"utf-8\"><title>Hawser</title><script>location.replace(%q)</script>\n", uiURL)
+	if err := store.WriteFileAtomic(launchPath, []byte(page), 0o600); err == nil {
+		defer os.Remove(launchPath)
+		if abs, aerr := filepath.Abs(launchPath); aerr == nil {
+			p := filepath.ToSlash(abs)
+			if !strings.HasPrefix(p, "/") {
+				p = "/" + p // Windows drive paths
+			}
+			launchURL = (&url.URL{Scheme: "file", Path: p}).String()
+		}
+	}
+
 	browserDone := make(chan struct{})
 	switch opts.browser {
 	case "none":
 	case "default":
-		if err := openDefaultBrowser(uiURL); err != nil {
+		if err := openDefaultBrowser(launchURL); err != nil {
 			fmt.Fprintln(os.Stderr, "hawser: could not open a browser:", err)
 		}
 	default:
-		wait, err := openAppWindow(uiURL, filepath.Join(st.Dir, "window-profile"))
+		wait, err := openAppWindow(launchURL, filepath.Join(st.Dir, "window-profile"))
 		if err != nil {
 			if !errors.Is(err, errNoAppBrowser) {
 				fmt.Fprintln(os.Stderr, "hawser:", err)
 			}
-			if err := openDefaultBrowser(uiURL); err != nil {
+			if err := openDefaultBrowser(launchURL); err != nil {
 				fmt.Fprintln(os.Stderr, "hawser: could not open a browser; open the UI address above manually.")
 			}
 		} else {

@@ -207,7 +207,17 @@ func (x *session) xySendBlock(pkt []byte, first bool) error {
 			return err
 		}
 		sent := time.Now()
-		deadline := sent.Add(x.o.Timeout)
+		// X/YMODEM recovery is receiver-driven: a receiver that misses a block
+		// (or whose ACK was lost) times out and sends NAK. If the sender
+		// retransmitted on the same timeout both would act at once, the
+		// receiver would acknowledge the block twice and every later
+		// acknowledgement would be attributed to the wrong block. So the
+		// sender waits several receiver timeouts before acting on its own.
+		wait := x.o.Timeout
+		if !first {
+			wait = 5 * x.o.Timeout
+		}
+		deadline := sent.Add(wait)
 		cans := 0
 	wait:
 		for {

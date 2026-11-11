@@ -79,7 +79,8 @@ your inventory.
 
 ## Getting started
 
-Requirements: Go 1.24+ and Node.js 20+ to build. At run time Hawser needs
+Requirements: Go 1.24 or newer (it fetches the Go 1.26 toolchain the
+dependencies need automatically) and Node.js 20+ to build. At run time Hawser needs
 nothing else; Python scripts need a Python 3 interpreter.
 
 ```bash
@@ -169,7 +170,9 @@ builds compile but have not been exercised yet. Known gaps:
 - The VBScript interpreter covers the language broadly but only part of it
   is under test; regular expressions with back-references are rejected
 - Scrollback is not re-wrapped when the window width changes
-- Access to the UI is protected by a random token on a loopback port.
+- Access to the UI is protected by a random token on a loopback port (the
+  token is handed to the browser through a private file, not the command
+  line).
   `--listen` on a public address exposes a remote shell launcher: only do
   that behind TLS and a trusted network
 
