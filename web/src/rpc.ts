@@ -17,6 +17,7 @@ class Rpc {
   private dataHandlers = new Map<number, (p: Uint8Array) => void>();
   private queue: (string | Uint8Array)[] = [];
   private orphans = new Map<number, Uint8Array[]>();
+  private taps = new Set<(dir: "in" | "out", connId: number, data: Uint8Array) => void>();
   token = "";
   connected = false;
   onStatus: (connected: boolean, reason?: string) => void = () => {};
@@ -70,6 +71,7 @@ class Rpc {
       const b = new Uint8Array(data);
       if (b.length >= 5 && b[0] === FRAME_OUTPUT) {
         const id = ((b[1] << 24) | (b[2] << 16) | (b[3] << 8) | b[4]) >>> 0;
+        if (this.taps.size) for (const t of this.taps) t("in", id, b.subarray(5));
         const h = this.dataHandlers.get(id);
         if (h) h(b.subarray(5));
         else {
@@ -149,7 +151,14 @@ class Rpc {
     }
   }
 
+  /** Observe raw terminal traffic in both directions (hex view). */
+  tap(fn: (dir: "in" | "out", connId: number, data: Uint8Array) => void): () => void {
+    this.taps.add(fn);
+    return () => this.taps.delete(fn);
+  }
+
   sendInput(connId: number, data: Uint8Array): void {
+    if (this.taps.size) for (const t of this.taps) t("out", connId, data);
     const f = new Uint8Array(5 + data.length);
     f[0] = FRAME_INPUT;
     f[1] = connId >>> 24;

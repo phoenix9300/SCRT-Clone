@@ -19,6 +19,12 @@ import { comboName, keyInfo } from "../term/keyboard";
 
 // ------------------------------------------------------------------ menus
 
+/** Gives the keyboard back to the terminal once a menu has closed (unless it opened a dialog). */
+const refocusTerminal = () => setTimeout(() => {
+  const a = document.activeElement;
+  if (!getApp().dialogs.length && (!a || a === document.body || a.closest(".popup, .menubar"))) activeController()?.focus();
+}, 0);
+
 function MenuBar() {
   const [open, setOpen] = useState<{ i: number; x: number; y: number } | null>(null);
   const refs = useRef<(HTMLDivElement | null)[]>([]);
@@ -48,7 +54,7 @@ function MenuBar() {
         <div key={m.title} ref={(el) => { refs.current[i] = el; }} className={"menu-title" + (open?.i === i ? " open" : "")}
           onMouseDown={() => (open?.i === i ? setOpen(null) : show(i))} onMouseEnter={() => open && show(i)}>{m.title}</div>
       ))}
-      {open && <PopupMenu key={open.i} x={open.x} y={open.y} items={menus[open.i].items} onClose={() => setOpen(null)}
+      {open && <PopupMenu key={open.i} x={open.x} y={open.y} items={menus[open.i].items} onClose={() => { setOpen(null); refocusTerminal(); }}
         onNavigate={(d) => show((open.i + d + menus.length) % menus.length)} />}
     </div>
   );
@@ -56,7 +62,7 @@ function MenuBar() {
 
 export function useContextMenu(): [React.ReactNode, (e: { clientX: number; clientY: number }, items: MenuItem[]) => void] {
   const [m, setM] = useState<{ x: number; y: number; items: MenuItem[] } | null>(null);
-  return [m && <PopupMenu x={m.x} y={m.y} items={m.items} onClose={() => setM(null)} />, (e, items) => setM({ x: e.clientX, y: e.clientY, items })];
+  return [m && <PopupMenu x={m.x} y={m.y} items={m.items} onClose={() => { setM(null); refocusTerminal(); }} />, (e, items) => setM({ x: e.clientX, y: e.clientY, items })];
 }
 
 function Toolbar() {
