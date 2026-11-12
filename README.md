@@ -161,8 +161,8 @@ nano and `vttest` and compare every cell with a reference emulator.
 make build && cd web && npm run e2e
 ```
 
-drives the real application in headless Chromium (needs Playwright): twelve
-scenarios covering the workbench, session manager, options, SFTP, in-band
+drives the real application in headless Chromium (needs Playwright): thirteen
+scenarios covering the workbench, session manager, drag and drop, options, SFTP, in-band
 transfers, tools, scripting and re-attaching to live sessions.
 
 ## Status and limitations
