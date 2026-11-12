@@ -172,8 +172,7 @@ func (s *Store) walk(dir, rel string, node *Node, def map[string]any) error {
 		p := strings.TrimSuffix(childRel, ".json")
 		child := &Node{Name: base, Path: p}
 		if ov, err := readJSONMap(filepath.Join(dir, name)); err == nil {
-			eff := mergedCopy(def, ov)
-			child.Summary = summarise(eff)
+			child.Summary = summarise(mergeSession(deepCopy(def), ov))
 		} else {
 			child.Summary = &Summary{Description: "unreadable: " + err.Error()}
 		}
@@ -288,8 +287,35 @@ func (s *Store) Resolve(overrides map[string]any) (SessionOptions, error) {
 	if err != nil {
 		return SessionOptions{}, err
 	}
+	return decodeOptions(mergeSession(def, overrides))
+}
+
+// mergeSession overlays a session's overrides on the defaults (modifying and
+// returning def). A null value removes a key (used for free-form maps such as
+// environment variables), and a session that changes the protocol without
+// naming a port gets that protocol's standard port rather than the default
+// session's.
+func mergeSession(def, overrides map[string]any) map[string]any {
+	defProto, _ := def["protocol"].(string)
 	deepMerge(def, overrides)
-	return decodeOptions(def)
+	pruneNulls(def)
+	if _, hasPort := overrides["port"]; !hasPort {
+		if proto, _ := def["protocol"].(string); proto != defProto {
+			def["port"] = float64(DefaultPort(proto))
+		}
+	}
+	return def
+}
+
+func pruneNulls(m map[string]any) {
+	for k, v := range m {
+		switch t := v.(type) {
+		case nil:
+			delete(m, k)
+		case map[string]any:
+			pruneNulls(t)
+		}
+	}
 }
 
 // Session returns the effective options of a stored session.
@@ -566,12 +592,6 @@ func deepMerge(dst, src map[string]any) {
 		}
 		dst[k] = v
 	}
-}
-
-func mergedCopy(base, over map[string]any) map[string]any {
-	out := deepCopy(base)
-	deepMerge(out, over)
-	return out
 }
 
 func deepCopy(m map[string]any) map[string]any {

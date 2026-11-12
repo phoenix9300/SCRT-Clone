@@ -26,7 +26,7 @@ function TextEditor({ title, text, readOnly, close }: { title: string; text: str
   const [v, setV] = useState(text);
   return (
     <Dialog title={title} width={760} height={520} onClose={() => close()}
-      footer={<><span className="dim">{readOnly ? "Read only (file truncated)" : ""}</span><span className="spacer" /><Button onClick={() => close()}>{readOnly ? "Close" : "Cancel"}</Button>{!readOnly && <Button primary onClick={() => close(v)}>Save</Button>}</>}>
+      footer={<><span className="dim">{readOnly ? "Read only (too large or not text)" : ""}</span><span className="spacer" /><Button onClick={() => close()}>{readOnly ? "Close" : "Cancel"}</Button>{!readOnly && <Button primary onClick={() => close(v)}>Save</Button>}</>}>
       <textarea className="input sftp-edit" value={v} readOnly={readOnly} spellCheck={false} aria-label="File contents" onChange={(e) => setV(e.target.value)} />
     </Dialog>
   );
@@ -298,8 +298,18 @@ function SftpView({ tab, active }: { tab: Tab; active: boolean }) {
   const edit = async (e: FsEntry) => {
     try {
       const r = await rpc.call("sftp.read", { id: sid, path: e.path });
-      const text = await showDialog<string>((close) => <TextEditor title={e.name} text={r.text} readOnly={!!r.truncated} close={close} />);
-      if (text !== undefined && text !== r.text) { await rpc.call("sftp.write", { id: sid, path: e.path, data: text }); toast("Saved " + e.name); bump("remote"); }
+      // The editor works on LF text. Files that are not valid UTF-8 text would
+      // be damaged by a round trip, so they open read-only; CRLF files get
+      // their line endings back on save.
+      const binary = r.text.includes("\ufffd") || r.text.includes("\u0000");
+      const crlf = /\r\n/.test(r.text) && !/[^\r]\n/.test(r.text);
+      const shown = crlf ? r.text.replace(/\r\n/g, "\n") : r.text;
+      const text = await showDialog<string>((close) => <TextEditor title={e.name + (binary ? " (not UTF-8 text)" : "")} text={shown} readOnly={!!r.truncated || binary} close={close} />);
+      if (text !== undefined && text !== shown) {
+        await rpc.call("sftp.write", { id: sid, path: e.path, data: crlf ? text.replace(/\r?\n/g, "\r\n") : text });
+        toast("Saved " + e.name);
+        bump("remote");
+      }
     } catch (err) { fail(err); }
   };
   const clear = () => rpc.call("sftp.clear", { id: sid }).then((l: Job[]) => setJobs(l ?? [])).catch(fail);

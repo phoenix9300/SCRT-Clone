@@ -34,6 +34,8 @@ type fakeUI struct {
 	captions map[uint32]string
 	clip     string
 	cursor   int
+	active   uint32
+	status   []string
 }
 
 func (u *fakeUI) MessageBox(_ context.Context, msg, title string, buttons int) (int, error) {
@@ -52,16 +54,41 @@ func (u *fakeUI) ScreenText(_ context.Context, c uint32, r1, c1, r2, c2 int) (st
 	return "abc\ndef", nil
 }
 func (u *fakeUI) ScreenInfo(context.Context, uint32) (int, int, int, int, string, error) {
-	return 24, 80, 3, 7, "sel", nil
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	return 24, 80, 3, 7 + u.cursor, "sel", nil
+}
+func (u *fakeUI) moveCursor() {
+	u.mu.Lock()
+	u.cursor++
+	u.mu.Unlock()
 }
 func (u *fakeUI) Tabs(context.Context) ([]uint32, uint32, error) {
 	var ids []uint32
 	for _, c := range u.mgr.List() {
 		ids = append(ids, c.ID)
 	}
-	return ids, ids[0], nil
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	act := u.active
+	if len(ids) == 0 {
+		return nil, 0, nil
+	}
+	found := false
+	for _, id := range ids {
+		found = found || id == act
+	}
+	if !found {
+		act = ids[0]
+	}
+	return ids, act, nil
 }
-func (u *fakeUI) ActivateTab(context.Context, uint32) error { return nil }
+func (u *fakeUI) ActivateTab(_ context.Context, id uint32) error {
+	u.mu.Lock()
+	u.active = id
+	u.mu.Unlock()
+	return nil
+}
 func (u *fakeUI) SetCaption(_ context.Context, c uint32, s string) error {
 	u.mu.Lock()
 	u.captions[c] = s
@@ -73,16 +100,56 @@ func (u *fakeUI) GetCaption(_ context.Context, c uint32) (string, error) {
 	defer u.mu.Unlock()
 	return u.captions[c], nil
 }
-func (u *fakeUI) Clipboard(context.Context) (string, error) { return u.clip, nil }
+func (u *fakeUI) Clipboard(context.Context) (string, error) {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	return u.clip, nil
+}
 func (u *fakeUI) SetClipboard(_ context.Context, t string) error {
+	u.mu.Lock()
 	u.clip = t
+	u.mu.Unlock()
 	return nil
 }
-func (u *fakeUI) Status(string) {}
+func (u *fakeUI) Status(s string) {
+	u.mu.Lock()
+	u.status = append(u.status, s)
+	u.mu.Unlock()
+}
 func (u *fakeUI) OpenTab(_ context.Context, req conn.OpenRequest) (*conn.Conn, error) {
 	return u.mgr.Open(req, u.sink)
 }
 func (u *fakeUI) OpenSFTP(context.Context, uint32) error { return nil }
+
+// shellOverrides describe a local /bin/sh session with a predictable prompt.
+func shellOverrides(prompt string) map[string]any {
+	if prompt == "" {
+		prompt = "$ "
+	}
+	return map[string]any{"protocol": "local", "local": map[string]any{"shell": "/bin/sh", "env": map[string]any{"PS1": prompt}}}
+}
+
+func waitState(t *testing.T, cn *conn.Conn, state string) {
+	t.Helper()
+	deadline := time.Now().Add(15 * time.Second)
+	for cn.State() != state {
+		if time.Now().After(deadline) {
+			t.Fatalf("state %s, want %s: %s", cn.State(), state, cn.Info(false).Message)
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
+}
+
+// openShell opens a connected local shell with the given prompt.
+func openShell(t *testing.T, m *conn.Manager, sink conn.Sink, prompt string) *conn.Conn {
+	t.Helper()
+	cn, err := m.Open(conn.OpenRequest{Overrides: shellOverrides(prompt), Cols: 100, Rows: 30}, sink)
+	if err != nil {
+		t.Fatal(err)
+	}
+	waitState(t, cn, conn.StateConnected)
+	return cn
+}
 
 func setup(t *testing.T) (*Host, *conn.Conn, *fakeUI) {
 	t.Helper()
@@ -94,18 +161,8 @@ func setup(t *testing.T) (*Host, *conn.Conn, *fakeUI) {
 	sink := &ackSink{mgr: m}
 	m.AddSink(sink)
 	t.Cleanup(m.CloseAll)
-	cn, err := m.Open(conn.OpenRequest{Overrides: map[string]any{"protocol": "local", "local": map[string]any{"shell": "/bin/sh"}}, Cols: 100, Rows: 30}, sink)
-	if err != nil {
-		t.Fatal(err)
-	}
-	deadline := time.Now().Add(15 * time.Second)
-	for cn.State() != conn.StateConnected {
-		if time.Now().After(deadline) {
-			t.Fatalf("not connected: %s", cn.Info(false).Message)
-		}
-		time.Sleep(20 * time.Millisecond)
-	}
 	ui := &fakeUI{mgr: m, sink: sink, captions: map[uint32]string{}}
+	cn := openShell(t, m, sink, "")
 	h := &Host{Mgr: m, UI: ui}
 	t.Cleanup(h.StopAll)
 	return h, cn, ui

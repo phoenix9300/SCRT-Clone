@@ -142,8 +142,10 @@ func runPython(e *env, src string) error {
 	if err != nil {
 		return err
 	}
+	// stderr carries output of the script's child processes (the shim moves
+	// their stdout there); show it as script output and keep it for crashes.
 	var stderr limitedBuf
-	cmd.Stderr = &stderr
+	cmd.Stderr = io.MultiWriter(&stderr, e.run)
 	cmd.WaitDelay = 2 * time.Second // do not hang on grandchildren holding the pipes
 	if err := cmd.Start(); err != nil {
 		return err
@@ -191,7 +193,7 @@ func runPython(e *env, src string) error {
 			return errors.New(msg)
 		}
 		var m pyMsg
-		if err := json.Unmarshal(line, &m); err != nil {
+		if err := json.Unmarshal(line, &m); err != nil || m.Op == "" {
 			// stray output on the protocol stream
 			_, _ = e.run.Write(line)
 			continue

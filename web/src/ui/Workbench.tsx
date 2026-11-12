@@ -276,6 +276,8 @@ function FindBar({ tabId }: { tabId: string }) {
     if (!c) return;
     if (!open) c.setSearch("", { caseSensitive: false, regex: false });
     else setMiss(!c.setSearch(q, { caseSensitive: cs, regex: re }));
+    // leaving this tab (or closing the bar) removes its highlights
+    return () => void c.setSearch("", { caseSensitive: false, regex: false });
   }, [open, q, cs, re]);
   if (!open || !c) return null;
   const close = () => { setApp({ findOpen: false }); c.focus(); };
@@ -309,7 +311,7 @@ function GroupView({ id }: { id: string }) {
       { label: "Rename…", run: cmd.renameTab }, { label: "Session Options…", disabled: !term, run: cmd.sessionOptions }, { sep: true },
       { label: "Move to New Tab Group (Right)", run: cmd.splitRight }, { label: "Move to New Tab Group (Below)", run: cmd.splitDown }, { sep: true },
       { label: "Close", run: cmd.closeTab },
-      { label: "Close Others", run: () => group.tabs.filter((x) => x !== t.id).forEach((x) => void closeTab(x)) },
+      { label: "Close Others", run: async () => { for (const x of group.tabs.filter((y) => y !== t.id)) await closeTab(x); } },
     ]);
   };
   const drop = (e: React.DragEvent, before?: string) => {

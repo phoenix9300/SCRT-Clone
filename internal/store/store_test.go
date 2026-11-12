@@ -132,3 +132,37 @@ func indexOf(h, n string) int {
 	}
 	return -1
 }
+
+func TestProtocolDefaultPortAndRemovedKeys(t *testing.T) {
+	s, err := Open(t.TempDir())
+	if err != nil {
+		t.Fatal(err)
+	}
+	// a session that only switches the protocol gets that protocol's port,
+	// not the default session's SSH port
+	o, err := s.Resolve(map[string]any{"protocol": "telnet", "host": "pbx"})
+	if err != nil || o.Port != 23 {
+		t.Fatalf("telnet without port: %d %v", o.Port, err)
+	}
+	if o, _ = s.Resolve(map[string]any{"protocol": "telnet", "host": "pbx", "port": 2323}); o.Port != 2323 {
+		t.Fatalf("explicit port lost: %d", o.Port)
+	}
+	// a customised default port applies to sessions of the default protocol only
+	_ = s.SaveDefault(map[string]any{"port": 2222, "ssh": map[string]any{"env": map[string]any{"A": "1", "B": "2"}}})
+	if o, _ = s.Resolve(map[string]any{"host": "h"}); o.Port != 2222 {
+		t.Fatalf("default port not inherited: %d", o.Port)
+	}
+	if o, _ = s.Resolve(map[string]any{"host": "h", "protocol": "rlogin"}); o.Port != 513 {
+		t.Fatalf("rlogin port: %d", o.Port)
+	}
+	// null removes an inherited key of a free-form map
+	o, _ = s.Resolve(map[string]any{"host": "h", "ssh": map[string]any{"env": map[string]any{"A": nil, "C": "3"}}})
+	if len(o.SSH.Env) != 2 || o.SSH.Env["B"] != "2" || o.SSH.Env["C"] != "3" {
+		t.Fatalf("env after removal: %v", o.SSH.Env)
+	}
+	_ = s.Save("t", map[string]any{"protocol": "telnet", "host": "pbx"})
+	tree, _ := s.Tree()
+	if tree.Children[0].Summary.Port != 23 {
+		t.Fatalf("tree summary port: %d", tree.Children[0].Summary.Port)
+	}
+}

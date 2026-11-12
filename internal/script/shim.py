@@ -7,8 +7,14 @@ import sys
 import threading
 import traceback
 
-_rd = sys.stdin
-_wr = sys.stdout
+# The protocol runs on private copies of the original stdin/stdout. The real
+# fds 0/1 are then detached, so child processes of the script (os.system,
+# subprocess) can neither read the host's replies nor corrupt the stream:
+# their stdout goes to stderr, which the host shows as script output.
+_rd = os.fdopen(os.dup(0), "r", encoding="utf-8", newline="\n")
+_wr = os.fdopen(os.dup(1), "w", encoding="utf-8", newline="\n")
+os.dup2(os.open(os.devnull, os.O_RDONLY), 0)
+os.dup2(2, 1)
 _lock = threading.Lock()
 _seq = [0]
 _methods = {}
@@ -129,8 +135,11 @@ def _main():
     try:
         code = compile(init["source"], path, "exec")
         exec(code, g)
-    except (_Quit, SystemExit):
+    except _Quit:
         pass
+    except SystemExit as e:
+        if e.code not in (None, 0):
+            err = "script exited with status %s\n" % (e.code,)
     except BaseException:
         et, ev, tb = sys.exc_info()
         if tb is not None and tb.tb_next is not None:

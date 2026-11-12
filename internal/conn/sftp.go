@@ -248,9 +248,17 @@ func (s *SFTPSession) Stat(p string) (FileEntry, error) {
 	return e, nil
 }
 
-func (s *SFTPSession) Mkdir(p string) error              { return s.client.MkdirAll(p) }
-func (s *SFTPSession) Rename(from, to string) error      { return s.client.PosixRename(from, to) }
-func (s *SFTPSession) Chmod(p string, mode uint32) error { return s.client.Chmod(p, os.FileMode(mode)) }
+func (s *SFTPSession) Mkdir(p string) error         { return s.client.MkdirAll(p) }
+func (s *SFTPSession) Rename(from, to string) error { return s.client.PosixRename(from, to) }
+
+// Chmod changes the permission bits and keeps setuid, setgid and sticky.
+func (s *SFTPSession) Chmod(p string, mode uint32) error {
+	m := os.FileMode(mode & 0o777)
+	if fi, err := s.client.Stat(p); err == nil {
+		m |= fi.Mode() & (os.ModeSetuid | os.ModeSetgid | os.ModeSticky)
+	}
+	return s.client.Chmod(p, m)
+}
 func (s *SFTPSession) RealPath(p string) (string, error) { return s.client.RealPath(p) }
 
 // Remove deletes a file or (recursively) a directory.

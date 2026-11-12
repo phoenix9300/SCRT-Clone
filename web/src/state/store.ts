@@ -366,7 +366,7 @@ function onConnState(info: ConnInfo): void {
       else if (info.state === "connected" && prev.state !== "connected") ctrl.status("Connected to " + info.target, "ok");
       else if (info.state === "disconnected") {
         ctrl.status(info.message || "Disconnected", info.failed ? "error" : "info");
-        if (info.options?.connection?.closeOnDisconnect && !info.failed) closeTab(tab.id, true);
+        if ((info.options ?? prev.options)?.connection?.closeOnDisconnect && !info.failed) closeTab(tab.id, true);
       }
     }
   }

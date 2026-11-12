@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -148,8 +150,7 @@ func newScreen(e *env, cn *conn.Conn) *object {
 		if !cn.Connected() {
 			return errors.New("the session is not connected")
 		}
-		cn.Send(encodeText(cn, s), 0, 0)
-		return e.ctx.Err()
+		return e.sendTo(cn, encodeText(cn, s), 0, 0)
 	}
 	o.method("Send", func(a []any) (any, error) { return nil, send(argStr(a, 0, "")) })
 	o.method("SendKeys", func(a []any) (any, error) { return nil, send(argStr(a, 0, "")) })
@@ -270,6 +271,19 @@ func newScreen(e *env, cn *conn.Conn) *object {
 	o.method("Get", get(""))
 	o.method("Get2", get("\r\n"))
 	return o
+}
+
+// sendTo writes data to cn and waits until it is written or the run is
+// stopped (a stalled transport must not make a script unstoppable).
+func (e *env) sendTo(cn *conn.Conn, data []byte, charDelay, lineDelay time.Duration) error {
+	done := make(chan struct{})
+	go func() { cn.Send(data, charDelay, lineDelay); close(done) }()
+	select {
+	case <-done:
+		return e.ctx.Err()
+	case <-e.ctx.Done():
+		return e.ctx.Err()
+	}
 }
 
 // encodeText converts s to the bytes sent on the wire.
@@ -631,10 +645,29 @@ func newFileTransfer(e *env) *object {
 	o.method("SendYmodem", func(a []any) (any, error) { return xfer("ymodem", "upload", []string{argStr(a, 0, "")}, "") })
 	o.method("ReceiveYmodem", func(a []any) (any, error) { return xfer("ymodem", "download", nil, "") })
 	o.method("SendAscii", func(a []any) (any, error) {
-		if err := cn.SendASCII(argStr(a, 0, "")); err != nil {
+		// conn.SendASCII sends in the background; a script needs it written
+		// before its next Send, so do it here.
+		path := argStr(a, 0, "")
+		if strings.HasPrefix(path, "~/") {
+			if home, err := os.UserHomeDir(); err == nil {
+				path = filepath.Join(home, path[2:])
+			}
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
 			return false, err
 		}
-		return true, nil
+		nl := "\r"
+		switch cn.Options().Terminal.NewlineOnSend {
+		case "lf":
+			nl = "\n"
+		case "crlf":
+			nl = "\r\n"
+		}
+		text := strings.NewReplacer("\r\n", nl, "\r", nl, "\n", nl).Replace(string(data))
+		t := cn.Options().Terminal
+		err = e.sendTo(cn, []byte(text), time.Duration(t.CharSendDelay)*time.Millisecond, time.Duration(t.LineSendDelay)*time.Millisecond)
+		return err == nil, err
 	})
 	return o
 }
@@ -654,8 +687,12 @@ func (w *xferWatch) Event(name string, payload any) {
 	if !ok || name != "xfer.progress" || ev.ID != w.id || (ev.Kind != "done" && ev.Kind != "error") {
 		return
 	}
+	msg := ev.Error
+	if ev.Kind == "error" && msg == "" {
+		msg = "transfer failed"
+	}
 	select {
-	case w.done <- ev.Error:
+	case w.done <- msg:
 	default:
 	}
 }
@@ -680,7 +717,9 @@ func newCommandWindow(e *env) *object {
 			}
 		}
 		for _, c := range targets {
-			c.Send(encodeText(c, text), 0, 0)
+			if err := e.sendTo(c, encodeText(c, text), 0, 0); err != nil {
+				return nil, err
+			}
 		}
 		return nil, nil
 	})

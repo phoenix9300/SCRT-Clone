@@ -57,6 +57,9 @@ export class TerminalController {
   private timers: number[] = [];
   private ro: ResizeObserver | null = null;
   private pendingAck = 0;
+  private sizeAnnounced = false;
+  private fixedKey = "";
+  private lastDpr = 0;
   private composing = false;
   private keywordRes: { re: RegExp; kw: Keyword }[] = [];
 
@@ -97,7 +100,8 @@ export class TerminalController {
     term.onClipboard = (text) => navigator.clipboard?.writeText(text).catch(() => {});
     term.onPrint = (text) => host.notify("print", this, text);
     term.onResizeRequest = (cols, rows) => {
-      if (t.sizeMode === "fixed" || t.allow132) this.setSize(cols, rows);
+      const cur = this.opts.terminal;
+      if (cur.sizeMode === "fixed" || cur.allow132) this.setSize(cols, rows);
     };
     term.colorQuery = (w) => {
       const th = this.renderer?.theme;
@@ -137,6 +141,9 @@ export class TerminalController {
     if (o.encoding !== t.encoding) this.term.setEncoding(t.encoding);
     if (o.scrollback !== t.scrollback) this.term.setScrollback(t.scrollback);
     Object.assign(o, { answerback: t.answerback, ansiColor: t.ansiColor, allowResize: t.allow132, allowTitleChange: t.allowTitleChange, allowClipboardWrite: t.allowClipboardWrite });
+    if (o.newLineMode !== t.newLineMode) this.term.newLineMode = o.newLineMode = t.newLineMode;
+    if (o.autoWrap !== t.autoWrap) this.term.autoWrap = o.autoWrap = t.autoWrap;
+    if (o.c1Controls !== t.c1Controls) this.term.parser.c1 = o.c1Controls = t.c1Controls;
     this.setKeywords();
     if (this.renderer) {
       this.renderer.setTheme(buildTheme(this.scheme()));
@@ -230,10 +237,20 @@ export class TerminalController {
     const w = this.root.clientWidth - 12; // scrollbar gutter
     const h = this.root.clientHeight;
     if (w <= 0 || h <= 0) return;
+    // browser zoom or a move to another monitor changes the pixel ratio
+    if (window.devicePixelRatio !== this.lastDpr) {
+      this.lastDpr = window.devicePixelRatio;
+      this.renderer.measure();
+    }
     const t = this.opts.terminal;
     if (t.sizeMode === "fixed") {
-      this.renderer.resizeCanvas();
+      const key = `${t.cols}x${t.rows}`;
+      if (key !== this.fixedKey) {
+        this.fixedKey = key;
+        this.setSize(t.cols || 80, t.rows || 24);
+      } else this.renderer.resizeCanvas();
     } else {
+      this.fixedKey = "";
       const { cols, rows } = this.renderer.fit(w - 4, h - 2);
       this.setSize(cols, rows);
     }
@@ -241,9 +258,15 @@ export class TerminalController {
   }
 
   setSize(cols: number, rows: number): void {
-    if (cols !== this.term.cols || rows !== this.term.rows) {
-      this.term.resize(cols, rows);
+    const changed = cols !== this.term.cols || rows !== this.term.rows;
+    // the engine opened the connection with a placeholder size: always tell
+    // it the real one once, even when the emulator already has it (fixed size)
+    if (changed || !this.sizeAnnounced) {
+      this.sizeAnnounced = true;
       rpc.notify("conn.resize", { id: this.connId, cols, rows });
+    }
+    if (changed) {
+      this.term.resize(cols, rows);
       this.clearSelection();
       this.host.notify("size", this);
     }
@@ -283,9 +306,13 @@ export class TerminalController {
   private onData(p: Uint8Array): void {
     const buf = this.term.buf;
     const wasBottom = buf.scrollOffset === 0;
-    this.term.write(p);
-    if (!wasBottom && this.opts.terminal.scrollOnOutput) buf.scrollOffset = 0;
-    this.pendingAck += p.length;
+    try {
+      this.term.write(p);
+    } finally {
+      // always account for the bytes: the engine stops sending when acks stall
+      this.pendingAck += p.length;
+    }
+    if (!wasBottom && this.opts.terminal.scrollOnOutput) this.term.buf.scrollOffset = 0;
     if (this.pendingAck >= 32768) this.flushAck();
     else if (this.pendingAck === p.length) setTimeout(() => this.flushAck(), 50);
     this.schedule();

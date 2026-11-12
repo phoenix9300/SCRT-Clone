@@ -56,6 +56,30 @@ module.exports = async ({ page, waitText, cfg, sshd }) => {
   must(/hexview-7/.test(recv.split('\n').map((l) => l.slice(58)).join('')), 'received text not shown');
   await page.keyboard.press('Escape');
 
+  // --- a fixed-size session tells the host its configured size
+  await rpc('sessions.save', { path: 'fixed', overrides: { protocol: 'local', terminal: { sizeMode: 'fixed', cols: 100, rows: 30 }, connection: { closeOnDisconnect: true } }, secrets: {} });
+  await page.locator('.tree-row:has(.name:text-is("fixed"))').dblclick();
+  await until(async () => (await h.tabs()) === 2, 'fixed tab');
+  await page.waitForFunction(() => { const s = window.__hawser.screen().join('\n'); return !/hexview/.test(s) && /[$#] ?$/m.test(s); }, null, { timeout: 15000 });
+  await page.keyboard.type('stty size\n');
+  await waitText(/^30 100/m);
+  const st = await h.ctrlState();
+  must(st.cols === 100 && st.rows === 30, 'emulator size ' + JSON.stringify(st));
+  // … and closes its tab when the shell exits (closeOnDisconnect)
+  await page.keyboard.type('exit\n');
+  await until(async () => (await h.tabs()) === 1, 'tab closed on disconnect');
+  // an emptied password box must not delete a saved password
+  await rpc('sessions.save', { path: 'router', overrides: { host: '192.0.2.1', credential: 'lab-admin' }, secrets: { password: 'keep-me' } });
+  await page.locator('.tree-row:has(.name:text-is("router"))').click({ button: 'right' });
+  await page.click('.popup .item:has(.label:text-is("Properties…"))');
+  const pw = page.locator('.dialog').last().locator('.field:has(label:text-is("Password")) input');
+  await pw.fill('x'); await pw.fill('');
+  await h.field('Description').fill('edited');
+  await h.okDialog();
+  await until(async () => (await rpc('sessions.get', { path: 'router' })).overrides.description === 'edited', 'session saved');
+  must((await rpc('sessions.get', { path: 'router' })).secrets.password === true, 'saved password was deleted by an emptied field');
+  await page.locator('.tab').first().click();
+
   // --- Kermit through the Transfer menu over SSH
   if (!fs.existsSync('/usr/bin/gkermit')) { console.log('gkermit not installed: Kermit part skipped'); return; }
   const srv = await sshd();

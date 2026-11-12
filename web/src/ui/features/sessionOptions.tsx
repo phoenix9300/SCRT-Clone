@@ -1,10 +1,10 @@
 // Session options dialog (also edits the Default Session).
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { rpc } from "../../rpc";
 import { ENCODINGS } from "../../term/charsets";
 import { EMULATIONS } from "../../term/emulation";
 import { COLOR_SCHEMES, ColorScheme } from "../../term/palette";
-import { connect, controllers, fail, getApp, patchTab, reloadTree, showDialog, toast, TreeNode, useApp } from "../../state/store";
+import { connect, controllers, fail, getApp, patchTab, reloadTree, setGlobal, showDialog, toast, TreeNode, useApp } from "../../state/store";
 import { features } from "../features";
 import { BAUDS, PROTOCOLS } from "../dialogs";
 import { Button, Check, Dialog, Field, Num, Select, Text } from "../kit";
@@ -98,11 +98,13 @@ function SessionOptions({ arg, close }: { arg: Arg; close: () => void }) {
 
   useEffect(() => { if (!pages.some((p) => p.id === page)) setPage("connection"); }, [protocol]);
 
-  const setSecret = (k: string, v: string | null | undefined) => setSecrets((s) => { const n = { ...s }; if (v === undefined) delete n[k]; else n[k] = v; return n; });
+  const setSecret = (k: string, v: string | null | undefined) => setSecrets((s) => { const n = { ...s }; if (v === undefined || v === "") delete n[k]; else n[k] = v; return n; });
+
+  const curPath = useRef(arg.path ?? "");
 
   async function save(andConnect: boolean) {
     if (busy || !eff) return;
-    let path = arg.path ?? "";
+    let path = curPath.current;
     const nm = name.trim();
     if (!isDefault) {
       if (!nm) return toast("A session name is required.", "error"), setPage("connection");
@@ -132,7 +134,15 @@ function SessionOptions({ arg, close }: { arg: Arg; close: () => void }) {
         const to = parent + nm;
         if (to !== path) {
           await rpc.call("sessions.rename", { from: path, to, folder: false });
+          // open tabs and this dialog follow the new name, even if the save below fails
+          for (const t of Object.values(getApp().tabs)) {
+            if (t.info.session === path) patchTab(t.id, { info: { ...t.info, session: to } });
+          }
+          const g = getApp().global;
+          const fix = (l?: string[]) => (l ?? []).map((x) => (x === path ? to : x));
+          if ((g.autoSessions ?? []).includes(path) || (g.recentSessions ?? []).includes(path)) setGlobal({ autoSessions: fix(g.autoSessions), recentSessions: fix(g.recentSessions) });
           path = to;
+          curPath.current = to;
         }
       }
       const overrides = deepDiff(e, defaults);
@@ -151,7 +161,15 @@ function SessionOptions({ arg, close }: { arg: Arg; close: () => void }) {
           }
         }
       } else {
-        for (const c of controllers.values()) c.applyOptions();
+        // every stored session inherits from the defaults: recompute and apply
+        for (const t of Object.values(getApp().tabs)) {
+          if (t.kind !== "terminal" || !t.info.session) continue;
+          rpc.call<any>("sessions.get", { path: t.info.session }).then((d) => {
+            const eff2 = deepMerge(d.defaults, d.overrides);
+            controllers.get(t.id)?.applyOptions(eff2);
+            patchTab(t.id, { info: { ...getApp().tabs[t.id].info, options: eff2 } });
+          }).catch(() => {});
+        }
       }
       close();
       if (andConnect && isNew) connect({ session: path });

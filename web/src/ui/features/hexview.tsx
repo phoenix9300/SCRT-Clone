@@ -7,7 +7,7 @@ import { features } from "../features";
 import { Button, Check, Dialog } from "../kit";
 
 interface Chunk { dir: "in" | "out"; data: Uint8Array; t: number }
-const KEEP = 256 * 1024;
+const KEEP = 64 * 1024;
 const history = new Map<number, { chunks: Chunk[]; size: number }>();
 const listeners = new Set<(conn: number) => void>();
 
@@ -19,6 +19,8 @@ rpc.tap((dir, conn, data) => {
   while (h.size > KEEP && h.chunks.length > 1) h.size -= h.chunks.shift()!.data.length;
   listeners.forEach((l) => l(conn));
 });
+
+rpc.on("conn.closed", (d: { id: number }) => history.delete(d.id));
 
 /** Classic 16-bytes-per-row dump; consecutive chunks of one direction are joined. */
 export function hexDump(chunks: Chunk[], showIn: boolean, showOut: boolean): string {

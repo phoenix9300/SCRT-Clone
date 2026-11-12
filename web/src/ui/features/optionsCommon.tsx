@@ -10,7 +10,10 @@ export const clone = <T,>(v: T): T => (v === undefined ? v : JSON.parse(JSON.str
 export function deepMerge(a: any, b: any): any {
   if (!isObj(a) || !isObj(b)) return b === undefined ? clone(a) : clone(b);
   const out: any = clone(a);
-  for (const k of Object.keys(b)) out[k] = isObj(out[k]) && isObj(b[k]) ? deepMerge(out[k], b[k]) : clone(b[k]);
+  for (const k of Object.keys(b)) {
+    if (b[k] === null) delete out[k]; // tombstone written by deepDiff
+    else out[k] = isObj(out[k]) && isObj(b[k]) ? deepMerge(out[k], b[k]) : clone(b[k]);
+  }
   return out;
 }
 
@@ -24,6 +27,9 @@ export function deepDiff(eff: any, def: any): any {
       if (Object.keys(sub).length) out[k] = sub;
     } else if (JSON.stringify(e) !== JSON.stringify(d)) out[k] = e;
   }
+  // a key that the defaults have but the edited object lost (free-form maps
+  // such as environment variables) is recorded as null = "removed"
+  if (isObj(def)) for (const k of Object.keys(def)) if (isObj(eff) && !(k in eff)) out[k] = null;
   return out;
 }
 
@@ -55,7 +61,7 @@ export function Pick(p: { value: string; onChange: (v: string) => void; mode?: "
   return (
     <>
       <Text value={p.value ?? ""} onChange={p.onChange} placeholder={p.placeholder} mono />
-      <Button small onClick={async () => { const r = await pickPath({ mode: p.mode ?? "open", startDir: p.value || undefined }); if (r) p.onChange(r); }}>Browse…</Button>
+      <Button small onClick={async () => { const r = await pickPath({ mode: p.mode ?? "open", startDir: p.value ? (p.mode === "folder" ? p.value : p.value.replace(/[\\/][^\\/]*$/, "") || undefined) : undefined }); if (r) p.onChange(r); }}>Browse…</Button>
     </>
   );
 }
