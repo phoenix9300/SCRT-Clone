@@ -6,6 +6,7 @@ import (
 	"crypto/ed25519"
 	"crypto/rand"
 	"errors"
+	"fmt"
 	"net"
 	"os"
 	"path/filepath"
@@ -26,6 +27,8 @@ const (
 	HostKeyMatch HostKeyStatus = iota
 	HostKeyUnknown
 	HostKeyChanged
+	// HostKeyInvalid: the database is unreadable or lists the key as revoked
+	HostKeyInvalid
 )
 
 // HostKeyDB is Hawser's SSH host key database. It is an OpenSSH-format
@@ -73,22 +76,33 @@ var dummyAddr = &net.TCPAddr{IP: net.IPv4(0, 0, 0, 0), Port: 22}
 
 // Check looks key up for hostname ("host:port").
 func (db *HostKeyDB) Check(hostname string, remote net.Addr, key ssh.PublicKey) (HostKeyStatus, []ssh.PublicKey) {
+	status, old, _ := db.CheckErr(hostname, remote, key)
+	return status, old
+}
+
+// CheckErr is Check plus the reason when the database itself cannot vouch
+// for the answer: it is unreadable, or the key is revoked. In those cases the
+// status is HostKeyInvalid and the key must not be accepted automatically.
+func (db *HostKeyDB) CheckErr(hostname string, remote net.Addr, key ssh.PublicKey) (HostKeyStatus, []ssh.PublicKey, error) {
 	hostKeyMu.Lock()
 	defer hostKeyMu.Unlock()
 	cb, err := db.callback()
 	if err != nil {
-		return HostKeyUnknown, nil
+		return HostKeyInvalid, nil, fmt.Errorf("the host key database cannot be read: %w", err)
 	}
 	if remote == nil {
 		remote = dummyAddr
 	}
 	err = cb(hostname, remote, key)
 	if err == nil {
-		return HostKeyMatch, nil
+		return HostKeyMatch, nil, nil
 	}
 	var ke *knownhosts.KeyError
-	if !errors.As(err, &ke) || len(ke.Want) == 0 {
-		return HostKeyUnknown, nil
+	if !errors.As(err, &ke) {
+		return HostKeyInvalid, nil, err
+	}
+	if len(ke.Want) == 0 {
+		return HostKeyUnknown, nil, nil
 	}
 	var old []ssh.PublicKey
 	status := HostKeyUnknown
@@ -100,7 +114,7 @@ func (db *HostKeyDB) Check(hostname string, remote net.Addr, key ssh.PublicKey) 
 			old = append(old, w.Key)
 		}
 	}
-	return status, old
+	return status, old, nil
 }
 
 // KnownTypes returns the key types stored for hostname.

@@ -323,6 +323,8 @@ func FactoryDefaults() SessionOptions {
 			Append: true,
 		},
 		Connection: ConnectionOptions{ReconnectDelay: 5},
-		Transfer:   TransferOptions{ZmodemAuto: true, ZmodemResume: true, XmodemCRC: true},
+		// Resume is off by default: a host can start a ZMODEM download unasked,
+		// and resuming would let it append to an existing file of the same name.
+		Transfer: TransferOptions{ZmodemAuto: true, XmodemCRC: true},
 	}
 }

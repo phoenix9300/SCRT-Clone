@@ -538,6 +538,9 @@ func WriteFileAtomic(file string, data []byte, perm os.FileMode) error {
 	}
 	name := tmp.Name()
 	_, werr := tmp.Write(data)
+	if werr == nil {
+		werr = tmp.Sync()
+	}
 	cerr := tmp.Close()
 	if werr != nil || cerr != nil {
 		os.Remove(name)

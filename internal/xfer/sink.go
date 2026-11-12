@@ -259,8 +259,9 @@ type dirFile struct {
 
 func (f *dirFile) Close() error {
 	err := f.File.Close()
-	if f.info.Mode&0o777 != 0 && runtime.GOOS != "windows" {
-		_ = os.Chmod(f.path, os.FileMode(f.info.Mode&0o777))
+	// the sender chooses these bits: never let it make a download executable
+	if f.info.Mode&0o666 != 0 && runtime.GOOS != "windows" {
+		_ = os.Chmod(f.path, os.FileMode(f.info.Mode&0o666))
 	}
 	if !f.info.ModTime.IsZero() {
 		_ = os.Chtimes(f.path, time.Time{}, f.info.ModTime)

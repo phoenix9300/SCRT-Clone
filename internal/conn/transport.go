@@ -85,6 +85,12 @@ type Prompter interface {
 // errProcessExited marks the normal end of a local shell.
 var errProcessExited = errors.New("process exited")
 
+// noRetryError marks connection failures that automatic reconnection must
+// not repeat (authentication and host key failures).
+type noRetryError struct{ error }
+
+func (e *noRetryError) Unwrap() error { return e.error }
+
 // ErrCancelled is returned when the user dismisses a prompt.
 var ErrCancelled = errors.New("cancelled by user")
 

@@ -145,7 +145,11 @@ func sshConnect(ctx context.Context, req *DialRequest) (*sshConn, error) {
 	if err != nil {
 		return nil, err
 	}
+	var ab *authBuilder
 	fail := func(err error) (*sshConn, error) {
+		if ab != nil && ab.sysAgentCls != nil {
+			_ = ab.sysAgentCls.Close()
+		}
 		_ = netConn.Close()
 		if parent != nil {
 			parent.release()
@@ -153,8 +157,7 @@ func sshConnect(ctx context.Context, req *DialRequest) (*sshConn, error) {
 		return nil, err
 	}
 
-	ab := newAuthBuilder(ctx, req)
-	defer ab.close()
+	ab = newAuthBuilder(ctx, req)
 	cfg := &ssh.ClientConfig{
 		User:            o.Username,
 		Auth:            ab.methods(),
@@ -189,7 +192,11 @@ func sshConnect(ctx context.Context, req *DialRequest) (*sshConn, error) {
 		if ab.cancelled {
 			return fail(ErrCancelled)
 		}
-		return fail(describeSSHError(err, o))
+		derr := describeSSHError(err, o)
+		if ab.hostKeyRefused || strings.Contains(err.Error(), "unable to authenticate") {
+			derr = &noRetryError{derr}
+		}
+		return fail(derr)
 	}
 	_ = netConn.SetDeadline(time.Time{})
 	ab.commit()
@@ -217,6 +224,9 @@ func sshConnect(ctx context.Context, req *DialRequest) (*sshConn, error) {
 		sc.info["authMethod"] = ab.authUsed
 	}
 	sc.fwdAgent = ab.forwardAgent()
+	if sc.fwdAgent != nil && ab.sysAgentCls != nil {
+		sc.addCloser(ab.sysAgentCls) // the forwarded agent socket lives as long as the connection
+	}
 
 	if iv := o.SSH.KeepAliveInterval; iv > 0 {
 		sc.stopKeep = make(chan struct{})
@@ -352,17 +362,19 @@ type authBuilder struct {
 	ctx context.Context
 	req *DialRequest
 
-	mu          sync.Mutex
-	savedPw     string
-	havePw      bool
-	pwTried     bool
-	pwToSave    string
-	ppToSave    map[string]string
-	cancelled   bool
-	authUsed    string
-	hostKey     ssh.PublicKey
-	sysAgent    agent.ExtendedAgent
-	sysAgentCls io.Closer
+	mu        sync.Mutex
+	savedPw   string
+	havePw    bool
+	pwTried   bool
+	pwToSave  string
+	ppToSave  map[string]string
+	cancelled bool
+	// hostKeyRefused is set when verification failed (policy or database error)
+	hostKeyRefused bool
+	authUsed       string
+	hostKey        ssh.PublicKey
+	sysAgent       agent.ExtendedAgent
+	sysAgentCls    io.Closer
 }
 
 func newAuthBuilder(ctx context.Context, req *DialRequest) *authBuilder {
@@ -381,10 +393,6 @@ func newAuthBuilder(ctx context.Context, req *DialRequest) *authBuilder {
 		}
 	}
 	return ab
-}
-
-func (ab *authBuilder) close() {
-	// the system agent connection must outlive auth when it is forwarded
 }
 
 // forwardAgent returns the agent to offer for agent forwarding, if any.
@@ -588,7 +596,16 @@ func (ab *authBuilder) signers() ([]ssh.Signer, error) {
 		}
 		ls := &lazySigner{ab: ab, path: f, data: data, pub: pub}
 		if err != nil || pub == nil {
-			// public half unknown: we must decrypt now to learn it
+			// Public half unknown. For a key the user did not choose for this
+			// session (a default ~/.ssh file) asking for its passphrase before
+			// any server wanted it would be a nuisance: use it only if it is
+			// not encrypted.
+			if len(o.IdentityFiles) == 0 {
+				if _, perr := keys.ParsePrivateKey(data, nil); perr != nil {
+					continue
+				}
+			}
+			// explicitly configured: decrypt now to learn the public key
 			s, lerr := ls.load()
 			if lerr != nil {
 				continue
@@ -760,9 +777,14 @@ func (ab *authBuilder) hostKeyCallback(hostname string, remote net.Addr, key ssh
 		return nil
 	}
 	db := ab.db()
-	status, old := db.Check(hostname, remote, key)
+	status, old, dbErr := db.CheckErr(hostname, remote, key)
 	if status == HostKeyMatch {
 		return nil
+	}
+	if status == HostKeyInvalid {
+		// never fall back to "unknown host" (which accept-new would trust)
+		ab.hostKeyRefused = true
+		return fmt.Errorf("host key for %s cannot be verified: %v", hostname, dbErr)
 	}
 	name, bits := keys.KeyTypeDisplay(key)
 	info := &HostKeyInfo{
@@ -776,6 +798,7 @@ func (ab *authBuilder) hostKeyCallback(hostname string, remote net.Addr, key ssh
 	}
 	switch policy {
 	case "strict":
+		ab.hostKeyRefused = true
 		if status == HostKeyChanged {
 			return fmt.Errorf("HOST KEY MISMATCH for %s: expected %s, server presented %s", hostname, info.OldSHA256, info.SHA256)
 		}
@@ -1022,12 +1045,16 @@ func (sc *sshConn) StartForward(spec store.PortForward) *ForwardStatus {
 	sc.forwards = append(sc.forwards, st)
 	sc.mu.Unlock()
 	if err != nil {
+		sc.mu.Lock()
 		st.Error = err.Error()
+		sc.mu.Unlock()
 		return st
 	}
+	sc.mu.Lock()
 	st.Listening = true
 	st.Address = ln.Addr().String()
 	st.closer = ln
+	sc.mu.Unlock()
 	sc.addCloser(ln)
 
 	go func() {
@@ -1078,12 +1105,10 @@ func pipeBoth(a, b io.ReadWriteCloser) {
 	}
 	go cp(a, b)
 	go cp(b, a)
+	// A side that half-closes after its request must still get the whole
+	// response, however long it takes, so wait for both directions.
 	<-done
-	// give the other direction a moment to drain, then tear down
-	select {
-	case <-done:
-	case <-time.After(5 * time.Second):
-	}
+	<-done
 	_ = a.Close()
 	_ = b.Close()
 }

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -187,6 +188,16 @@ func TestAccessControl(t *testing.T) {
 	if r := get("api/open", map[string]string{"X-Hawser-Token": s.Token, "Origin": origin}, "POST", strings.NewReader(`{"startup":[]}`)); r.StatusCode != http.StatusForbidden {
 		t.Fatalf("api/open from a browser origin: %d", r.StatusCode)
 	}
+	// without --allow-remote only loopback peers are served, even with the token
+	far := &http.Request{RemoteAddr: "192.0.2.7:4000", Header: http.Header{"X-Hawser-Token": {s.Token}}, URL: mustURL("/ws")}
+	if s.checkToken(far) {
+		t.Fatal("non-loopback peer accepted without AllowRemote")
+	}
+	s.AllowRemote = true
+	if !s.checkToken(far) {
+		t.Fatal("AllowRemote should admit a remote peer that has the token")
+	}
+	s.AllowRemote = false
 	// the UI page itself is public but never cached and carries a CSP
 	r = get("", nil, "GET", nil)
 	if r.StatusCode != 200 || r.Header.Get("X-Content-Type-Options") != "nosniff" {
@@ -284,4 +295,12 @@ func TestRPCSessionsAndTerminal(t *testing.T) {
 	if !strings.Contains(string(c2.call("conn.list", nil)), "[]") {
 		t.Fatal("connection still listed after close")
 	}
+}
+
+func mustURL(p string) *url.URL {
+	u, err := url.Parse(p)
+	if err != nil {
+		panic(err)
+	}
+	return u
 }

@@ -30,6 +30,7 @@ func (s *Server) handleUpload(w http.ResponseWriter, r *http.Request) {
 	dst := filepath.Join(dir, name)
 	f, err := os.OpenFile(dst, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0o600)
 	if err != nil {
+		_ = os.RemoveAll(dir)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

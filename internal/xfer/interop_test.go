@@ -178,7 +178,8 @@ func checkDir(t *testing.T, dir string, want []memFile, meta bool) {
 		if !st.ModTime().Equal(w.info.ModTime) {
 			t.Errorf("%s: mtime %v, want %v", w.info.Name, st.ModTime(), w.info.ModTime)
 		}
-		if st.Mode().Perm() != os.FileMode(w.info.Mode) {
+		// DirSink (our receiving side) deliberately drops execute bits; rz keeps them
+		if got := st.Mode().Perm(); got != os.FileMode(w.info.Mode) && got != os.FileMode(w.info.Mode&0o666) {
 			t.Errorf("%s: mode %o, want %o", w.info.Name, st.Mode().Perm(), w.info.Mode)
 		}
 	}

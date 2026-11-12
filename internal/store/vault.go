@@ -86,8 +86,11 @@ func OpenVault(path string) (*Vault, error) {
 		if v.doc.KDF == nil {
 			key, err := v.machineKey(false)
 			if err != nil {
-				// key file lost: secrets are unrecoverable, start an empty vault
+				// The key file is lost, so the entries cannot be decrypted. Keep
+				// the old vault beside the new one instead of destroying it: the
+				// user may still restore vault.key from a backup.
 				v.loadErr = err
+				_ = os.Rename(path, path+".unreadable")
 				key, err = v.machineKey(true)
 				if err != nil {
 					return nil, err

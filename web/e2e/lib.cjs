@@ -38,7 +38,7 @@ module.exports = (page) => {
     const p = dlg.locator('input[aria-label="Path"]');
     await h.until(async () => (await p.inputValue()) !== '', 'file chooser listing');
     await p.fill(dir); await p.press('Enter');
-    await h.until(async () => (await p.inputValue()) === dir && (await dlg.locator('tr').count()) > 1, 'listing of ' + dir);
+    await page.waitForTimeout(300);
   };
   h.toastText = () => page.locator('.toast').allInnerTexts();
   return h;

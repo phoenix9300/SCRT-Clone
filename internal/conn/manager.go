@@ -160,7 +160,8 @@ func (m *Manager) Open(req OpenRequest, sink Sink) (*Conn, error) {
 		text: newTextBuffer(), created: time.Now(),
 	}
 	c.ackCond = sync.NewCond(&c.mu)
-	c.inputCh = make(chan inputItem, 256)
+	c.inCond = sync.NewCond(&c.inMu)
+	c.inStop = make(chan struct{})
 	m.conns[c.ID] = c
 	m.mu.Unlock()
 	go c.inputLoop()
@@ -224,6 +225,7 @@ type inputItem struct {
 	data      []byte
 	charDelay time.Duration
 	lineDelay time.Duration
+	pause     time.Duration // wait instead of sending (send-string \p)
 	done      chan struct{}
 }
 
@@ -258,12 +260,19 @@ type Conn struct {
 	unacked int64
 	ackCond *sync.Cond
 
-	strip   stripper
-	text    *textBuffer
-	log     *sessionLog
-	divert  *diverter
-	rec     *Recorder
-	inputCh chan inputItem
+	strip  stripper
+	text   *textBuffer
+	log    *sessionLog
+	divert *diverter
+	rec    *Recorder
+
+	// ordered, non-blocking input queue drained by inputLoop
+	inMu     sync.Mutex
+	inCond   *sync.Cond
+	inQueue  []inputItem
+	inBytes  int
+	inClosed bool
+	inStop   chan struct{}
 
 	lastInput atomic.Int64 // unix nanos
 	bytesIn   atomic.Int64
@@ -401,8 +410,15 @@ func (c *Conn) connect(parent *Conn) {
 		}
 		c.mu.Lock()
 		if err == nil && (c.dead || c.userClosed || c.gen != gen) {
+			// the user gave up while the dial was still in flight
+			stale := c.gen != gen || c.dead
+			c.cancelDial = nil
 			c.mu.Unlock()
 			_ = t.Close()
+			if !stale {
+				c.text.close()
+				c.setState(StateDisconnected, "Connection cancelled", false)
+			}
 			return
 		}
 		if err != nil {
@@ -410,12 +426,19 @@ func (c *Conn) connect(parent *Conn) {
 			userClosed := c.userClosed
 			c.mu.Unlock()
 			msg := err.Error()
-			if errors.Is(err, ErrCancelled) || errors.Is(err, context.Canceled) || userClosed {
+			cancelled := errors.Is(err, ErrCancelled) || errors.Is(err, context.Canceled) || userClosed
+			if cancelled {
 				msg = "Connection cancelled"
 			}
 			c.text.close()
 			c.setState(StateDisconnected, msg, true)
-			c.scheduleReconnect(gen)
+			// Retrying makes sense for network failures only: a rejected
+			// login or host key would be asked again and again, and a wrong
+			// saved password could lock the account.
+			var fatal *noRetryError
+			if !cancelled && !errors.As(err, &fatal) {
+				c.scheduleReconnect(gen)
+			}
 			return
 		}
 		c.transport = t
@@ -639,7 +662,13 @@ func (c *Conn) shutdown() {
 	c.mu.Unlock()
 	c.Disconnect()
 	c.StopLog()
-	close(c.inputCh)
+	c.inMu.Lock()
+	if !c.inClosed {
+		c.inClosed = true
+		close(c.inStop)
+	}
+	c.inCond.Broadcast()
+	c.inMu.Unlock()
 }
 
 // ------------------------------------------------------------------ output
@@ -741,9 +770,55 @@ func (c *Conn) OutputOffset() int64 {
 
 // ------------------------------------------------------------------- input
 
+// enqueue appends an item to the connection's ordered input queue. It never
+// blocks: the caller may be the window's message loop, which must keep
+// running even when a transport has stopped accepting data.
+func (c *Conn) enqueue(it inputItem) bool {
+	c.inMu.Lock()
+	defer c.inMu.Unlock()
+	if c.inClosed || c.inBytes > maxQueuedInput {
+		if it.done != nil {
+			close(it.done)
+		}
+		return false
+	}
+	c.inQueue = append(c.inQueue, it)
+	c.inBytes += len(it.data)
+	c.inCond.Signal()
+	return true
+}
+
+// maxQueuedInput bounds keyboard data waiting for a stalled transport.
+const maxQueuedInput = 8 << 20
+
 func (c *Conn) inputLoop() {
-	for it := range c.inputCh {
-		c.writeItem(it)
+	for {
+		c.inMu.Lock()
+		for len(c.inQueue) == 0 && !c.inClosed {
+			c.inCond.Wait()
+		}
+		if c.inClosed {
+			for _, it := range c.inQueue {
+				if it.done != nil {
+					close(it.done)
+				}
+			}
+			c.inQueue = nil
+			c.inMu.Unlock()
+			return
+		}
+		it := c.inQueue[0]
+		c.inQueue = c.inQueue[1:]
+		c.inBytes -= len(it.data)
+		c.inMu.Unlock()
+		if it.pause > 0 {
+			select {
+			case <-time.After(it.pause):
+			case <-c.inStop:
+			}
+		} else {
+			c.writeItem(it)
+		}
 		if it.done != nil {
 			close(it.done)
 		}
@@ -799,10 +874,16 @@ func (c *Conn) writeItem(it inputItem) {
 			c.bytesOut.Add(int64(w))
 		}
 		last := chunk[len(chunk)-1]
+		delay := it.charDelay
 		if it.lineDelay > 0 && (last == '\r' || last == '\n') {
-			time.Sleep(it.lineDelay)
-		} else if it.charDelay > 0 {
-			time.Sleep(it.charDelay)
+			delay = it.lineDelay
+		}
+		if delay > 0 {
+			select {
+			case <-time.After(delay):
+			case <-c.inStop:
+				return
+			}
 		}
 	}
 }
@@ -825,8 +906,15 @@ func (c *Conn) Input(p []byte) {
 	if rec != nil {
 		rec.input(c, data)
 	}
-	defer func() { _ = recover() }() // inputCh closed during shutdown
-	c.inputCh <- inputItem{data: data}
+	c.enqueue(inputItem{data: data})
+}
+
+// QueueSend queues data with optional pacing and returns immediately; data
+// queued by successive calls reaches the host in call order.
+func (c *Conn) QueueSend(p []byte, charDelay, lineDelay time.Duration) {
+	if len(p) > 0 {
+		c.enqueue(inputItem{data: append([]byte(nil), p...), charDelay: charDelay, lineDelay: lineDelay})
+	}
 }
 
 // Send writes data honouring optional pacing and waits until it is written.
@@ -834,31 +922,39 @@ func (c *Conn) Send(p []byte, charDelay, lineDelay time.Duration) {
 	if len(p) == 0 {
 		return
 	}
-	c.mu.Lock()
-	dead := c.dead
-	c.mu.Unlock()
-	if dead {
-		return
-	}
-	defer func() { _ = recover() }()
 	done := make(chan struct{})
-	c.inputCh <- inputItem{data: append([]byte(nil), p...), charDelay: charDelay, lineDelay: lineDelay, done: done}
+	c.enqueue(inputItem{data: append([]byte(nil), p...), charDelay: charDelay, lineDelay: lineDelay, done: done})
 	<-done
 }
 
-// SendString sends text containing \p pause markers and escapes already expanded.
-func (c *Conn) SendString(s string) {
+// queueString queues text in "send string" notation (escapes, \p pauses).
+func (c *Conn) queueString(s string, done chan struct{}) {
 	data := Unescape(s)
-	for len(data) > 0 {
+	for {
 		i := indexBytes(data, pauseMarker)
 		if i < 0 {
-			c.Send(data, 0, 0)
-			return
+			break
 		}
-		c.Send(data[:i], 0, 0)
-		time.Sleep(time.Second)
+		if i > 0 {
+			c.enqueue(inputItem{data: append([]byte(nil), data[:i]...)})
+		}
+		c.enqueue(inputItem{pause: time.Second})
 		data = data[i+len(pauseMarker):]
 	}
+	if len(data) > 0 || done != nil {
+		c.enqueue(inputItem{data: append([]byte(nil), data...), done: done})
+	}
+}
+
+// QueueString queues a "send string" (escapes expanded, \p = one second
+// pause) without waiting.
+func (c *Conn) QueueString(s string) { c.queueString(s, nil) }
+
+// SendString sends a "send string" and waits until it has been written.
+func (c *Conn) SendString(s string) {
+	done := make(chan struct{})
+	c.queueString(s, done)
+	<-done
 }
 
 func indexBytes(h, n []byte) int {

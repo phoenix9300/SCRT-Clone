@@ -353,14 +353,14 @@ func (s *SFTPSession) Enqueue(direction, local, remote, conflict string) (*SFTPJ
 	}
 	j := &SFTPJob{SFTPJobInfo: SFTPJobInfo{ID: fmt.Sprintf("j%d", jobSeq.Add(1)), Session: s.ID, Direction: direction, Local: local, Remote: remote,
 		Name: name, State: "queued", Conflict: conflict}}
-	s.jobsMu.Lock()
-	s.jobs[j.ID] = j
-	s.jobsMu.Unlock()
 	select {
 	case s.queue <- j:
 	default:
 		return nil, errors.New("transfer queue is full")
 	}
+	s.jobsMu.Lock()
+	s.jobs[j.ID] = j
+	s.jobsMu.Unlock()
 	s.notify(j, true)
 	return j, nil
 }
@@ -514,7 +514,10 @@ func (s *SFTPSession) download(ctx context.Context, j *SFTPJob) error {
 		return err
 	}
 	p := &progress{ctx: ctx, s: s, j: j}
-	dest := filepath.Join(j.Local, path.Base(j.Remote))
+	dest, err := safeLocalJoin(j.Local, path.Base(j.Remote))
+	if err != nil {
+		return err
+	}
 	if !fi.IsDir() {
 		j.mu.Lock()
 		j.Size, j.Files = fi.Size(), 1
@@ -549,12 +552,19 @@ func (s *SFTPSession) download(ctx context.Context, j *SFTPJob) error {
 	rel := func(r string) string {
 		return filepath.Join(dest, filepath.FromSlash(strings.TrimPrefix(strings.TrimPrefix(r, j.Remote), "/")))
 	}
+	// names come from the server: never let one escape the destination
 	for _, d := range dirs {
+		if !withinDir(dest, rel(d)) {
+			return fmt.Errorf("refusing remote path %q: it would be saved outside %s", d, dest)
+		}
 		if err := os.MkdirAll(rel(d), 0o755); err != nil {
 			return err
 		}
 	}
 	for _, f := range files {
+		if !withinDir(dest, rel(f.remote)) {
+			return fmt.Errorf("refusing remote path %q: it would be saved outside %s", f.remote, dest)
+		}
 		if err := s.downloadFile(p, f.remote, rel(f.remote), f.fi); err != nil {
 			return err
 		}
@@ -779,4 +789,23 @@ func LocalList(dir string) (string, []FileEntry, error) {
 	}
 	sortEntries(out)
 	return abs, out, nil
+}
+
+// safeLocalJoin joins a server-supplied file name onto a local directory,
+// rejecting names that would land elsewhere (".." or, on Windows, names
+// containing a path separator or drive).
+func safeLocalJoin(dir, name string) (string, error) {
+	if name == "" || name == "." || name == ".." || strings.ContainsAny(name, `/\`) || filepath.VolumeName(name) != "" {
+		return "", fmt.Errorf("refusing unsafe remote file name %q", name)
+	}
+	return filepath.Join(dir, name), nil
+}
+
+// withinDir reports whether target is dir itself or inside it.
+func withinDir(dir, target string) bool {
+	rel, err := filepath.Rel(dir, target)
+	if err != nil {
+		return false
+	}
+	return rel == "." || (rel != ".." && !strings.HasPrefix(rel, ".."+string(filepath.Separator)) && !filepath.IsAbs(rel))
 }

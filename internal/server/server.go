@@ -39,8 +39,9 @@ type Server struct {
 	Mgr   *conn.Manager
 	// Token authenticates the UI. It is generated at start-up.
 	Token string
-	// AllowRemote disables the loopback Origin restriction (the token is
-	// still required).
+	// AllowRemote accepts clients from other machines (the token is still
+	// required). Without it only loopback peers are served, whatever address
+	// the listener is bound to.
 	AllowRemote bool
 	// TLSCert and TLSKey, when set, serve the UI over HTTPS.
 	TLSCert, TLSKey string
@@ -49,7 +50,8 @@ type Server struct {
 	UIDir string
 	// Startup lists actions the UI should perform once it is ready
 	// (sessions to open, scripts to run) – from the command line.
-	Startup []map[string]any
+	Startup   []map[string]any
+	startupMu sync.Mutex
 
 	handlers map[string]handler
 	clients  sync.Map // *client -> struct{}
@@ -147,6 +149,12 @@ func (s *Server) Close() {
 }
 
 func (s *Server) checkToken(r *http.Request) bool {
+	if !s.AllowRemote {
+		host, _, err := net.SplitHostPort(r.RemoteAddr)
+		if ip := net.ParseIP(host); err != nil || ip == nil || !ip.IsLoopback() {
+			return false
+		}
+	}
 	tok := r.URL.Query().Get("token")
 	if tok == "" {
 		tok = r.Header.Get("X-Hawser-Token")

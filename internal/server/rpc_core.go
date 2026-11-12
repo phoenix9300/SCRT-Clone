@@ -38,8 +38,10 @@ func (s *Server) registerCore() {
 	s.on("app.info", func(c *client, _ json.RawMessage) (any, error) {
 		home, _ := os.UserHomeDir()
 		host, _ := os.Hostname()
+		s.startupMu.Lock()
 		startup := s.Startup
 		s.Startup = nil
+		s.startupMu.Unlock()
 		return map[string]any{
 			"version":       Version,
 			"os":            runtime.GOOS,
@@ -324,10 +326,11 @@ func (s *Server) registerCore() {
 			if cn == nil {
 				continue
 			}
+			// queued in call order; never blocks the window's message loop
 			if p.Escapes {
-				go cn.SendString(p.Text)
+				cn.QueueString(p.Text)
 			} else {
-				go cn.Send([]byte(p.Text), time.Duration(p.CharDelay)*time.Millisecond, time.Duration(p.LineDelay)*time.Millisecond)
+				cn.QueueSend([]byte(p.Text), time.Duration(p.CharDelay)*time.Millisecond, time.Duration(p.LineDelay)*time.Millisecond)
 			}
 		}
 		return true, nil

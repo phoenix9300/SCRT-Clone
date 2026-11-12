@@ -424,7 +424,9 @@ func (t *telnetTransport) feed(b byte, reply []byte) []byte {
 			reply = append(reply, t.subnegotiation(t.sb)...)
 			t.state = tsData
 		} else if b == tnIAC {
-			t.sb = append(t.sb, tnIAC)
+			if len(t.sb) < 4096 {
+				t.sb = append(t.sb, tnIAC)
+			}
 			t.state = tsSB
 		} else {
 			t.state = tsData
