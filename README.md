@@ -113,6 +113,8 @@ Targets given to a second `hawser` invocation open as tabs in the running
 window. The classic `/SSH2 /L user /P port host`, `/S "session"`,
 `/SCRIPT file` switches are accepted too.
 
+See the [user guide](docs/guide.md) and the [scripting reference](docs/scripting.md).
+
 Configuration lives in the per-user config directory (`~/.config/hawser`,
 `%AppData%\hawser`, `~/Library/Application Support/hawser`): one small JSON
 file per session under `sessions/`, `known_hosts`, `vault.json`, logs and
