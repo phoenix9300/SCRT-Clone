@@ -175,8 +175,7 @@ and macOS builds compile but have not been exercised yet. Known gaps:
   authentication, SSH compression, TAPI, RDP; Kermit has no sliding
   windows or text mode
 - Serial ports are tested over a pseudo-terminal only, not real hardware;
-  X11 forwarding is tested up to the cookie handshake, not against an X
-  server; hardware flow-control selection is Linux/macOS only
+  hardware flow-control selection is Linux/macOS only
 - VBScript: regular expressions with back-references or look-ahead are
   rejected, and a few rarely used language details differ (see
   `internal/vbs/README.md`)
