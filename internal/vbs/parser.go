@@ -28,6 +28,18 @@ type parser struct {
 	depth   int
 	inProc  bool
 	inClass bool
+	globals map[string]bool // names of global procedures and classes seen so far
+}
+
+// declareGlobal reports a redefinition of a global procedure or class.
+func (p *parser) declareGlobal(t token) {
+	if p.globals == nil {
+		p.globals = map[string]bool{}
+	}
+	if p.globals[t.lower] {
+		p.fail(t, 1041, "Name redefined: '"+t.text+"'")
+	}
+	p.globals[t.lower] = true
 }
 
 type syntaxPanic struct{ err *Error }
@@ -762,6 +774,9 @@ func (p *parser) parseProc(kind procKind, public, isDefault bool, ps pos) *procD
 		p.fail(p.peek(), 1002, "")
 	}
 	name := p.ident()
+	if !p.inClass {
+		p.declareGlobal(name)
+	}
 	pd := &procDef{pos: ps, name: name.text, lname: name.lower, kind: kind, public: public, isDefault: isDefault, file: p.file}
 	if p.acceptOp("(") {
 		if !p.acceptOp(")") {
@@ -808,6 +823,7 @@ func (p *parser) parseClass(ps pos) Stmt {
 		p.fail(p.peek(), 1002, "")
 	}
 	name := p.ident()
+	p.declareGlobal(name)
 	cd := &classDef{
 		pos: ps, name: name.text, lname: name.lower, file: p.file,
 		fieldPub: map[string]bool{},

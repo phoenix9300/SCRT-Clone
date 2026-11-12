@@ -142,7 +142,14 @@ func init() {
 		return n, nil
 	})
 	reg("CLng", 1, 1, func(in *Interpreter, args []Value) (Value, error) {
-		return toInt(args[0])
+		n, err := toInt(args[0])
+		if err != nil {
+			return nil, err
+		}
+		if n < math.MinInt32 || n > math.MaxInt32 {
+			return nil, newErr(6, "")
+		}
+		return n, nil
 	})
 	reg("CByte", 1, 1, func(in *Interpreter, args []Value) (Value, error) {
 		n, err := toInt(args[0])

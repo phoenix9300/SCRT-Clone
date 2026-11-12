@@ -215,6 +215,13 @@ func (in *Interpreter) finish(err error, file string) error {
 		if e.File == "" {
 			e.File = file
 		}
+		if e.Source == "" {
+			if e.Syntax {
+				e.Source = "Microsoft VBScript compilation error"
+			} else {
+				e.Source = "Microsoft VBScript runtime error"
+			}
+		}
 		return e
 	}
 	if errors.Is(err, ErrQuit) {

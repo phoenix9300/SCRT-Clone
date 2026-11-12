@@ -390,6 +390,9 @@ func (in *Interpreter) execReDim(f *frame, s *ReDimStmt) error {
 			return err
 		}
 		old, _ := (*cell).(*Array)
+		if old != nil && old.fixed {
+			return newErr(10, "")
+		}
 		var na *Array
 		if s.preserve && old != nil && len(old.dims) > 0 {
 			if len(old.dims) != len(dims) {

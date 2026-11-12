@@ -28,7 +28,7 @@ func (e *errObject) capture(err *Error) {
 	}
 }
 
-func (e *errObject) TypeName() string { return "Object" }
+func (e *errObject) TypeName() string { return "ErrObject" }
 
 func (e *errObject) Get(name string, args []Value) (Value, error) {
 	switch name {
