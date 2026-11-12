@@ -346,7 +346,7 @@ function GroupView({ id }: { id: string }) {
           const t = tabs[tid];
           if (!t) return null;
           const View = t.kind === "terminal" ? TerminalPane : tabViews[t.kind];
-          return <div key={tid} data-view={tid} className={"view" + (group.active === tid ? " active" : "")}>{View ? <View tab={t} active={group.active === tid && focused} /> : null}</div>;
+          return <div key={tid} data-view={tid} className={"view" + (group.active === tid ? " active" : "")}>{View ? <Boundary what="This tab"><View tab={t} active={group.active === tid && focused} /></Boundary> : null}</div>;
         })}
       </div>
       {menu}
@@ -469,6 +469,24 @@ function Toasts() {
   );
 }
 
+/** Keeps a crash inside one dialog or tab view from blanking the whole window. */
+class Boundary extends React.Component<{ what: string; onReset?: () => void; children: React.ReactNode }, { error: Error | null }> {
+  override state = { error: null as Error | null };
+  static getDerivedStateFromError(error: Error) {
+    return { error };
+  }
+  override render() {
+    if (!this.state.error) return this.props.children;
+    return (
+      <div className="boundary" role="alert">
+        <b>{this.props.what} ran into a problem.</b>
+        <div className="mono">{String(this.state.error.message)}</div>
+        <button className="btn small" onClick={() => { this.props.onReset?.(); this.setState({ error: null }); }}>Dismiss</button>
+      </div>
+    );
+  }
+}
+
 export function Workbench() {
   const g = useApp((s) => s.global);
   const groups = useApp((s) => s.groups);
@@ -514,7 +532,9 @@ export function Workbench() {
         </div>
       </div>
       {g.showStatusBar && <StatusBar />}
-      {dialogs.map((d) => <React.Fragment key={d.id}>{d.node}</React.Fragment>)}
+      {dialogs.map((d) => (
+        <Boundary key={d.id} what="A dialog" onReset={() => setApp((s) => ({ dialogs: s.dialogs.filter((x) => x.id !== d.id) }))}>{d.node}</Boundary>
+      ))}
       <Toasts />
       {menu}
     </div>

@@ -226,7 +226,8 @@ export function buildMenus(): { title: string; items: MenuItem[] }[] {
   const ctl = activeController();
   return [
     { title: "File", items: [
-      it("Quick Connect…", "quickConnect"), it("New Session…", "newSession"), it("Local Shell", "connectLocal"), sep,
+      it("Quick Connect…", "quickConnect"), it("New Session…", "newSession"), it("Local Shell", "connectLocal"),
+      { label: "Recent Sessions", disabled: !(g.recentSessions ?? []).length, children: (g.recentSessions ?? []).map((p) => ({ label: p, run: () => void connect({ session: p }) })) }, sep,
       it("Reconnect", "reconnect", { disabled: !term || up }), it("Reconnect All", "reconnectAll"),
       it("Disconnect", "disconnect", { disabled: !term || t!.info.state === "disconnected" }), it("Disconnect All", "disconnectAll"), sep,
       it("Clone Session", "clone", { disabled: off }), it("Connect SFTP Tab", "sftpTab", { disabled: !ssh }),

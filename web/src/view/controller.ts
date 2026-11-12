@@ -573,7 +573,7 @@ export class TerminalController {
         let a = pos.col, b = pos.col;
         while (a > 0 && line.ext?.get(a - 1)?.link === ext.link) a--;
         while (b < line.cols - 1 && line.ext?.get(b + 1)?.link === ext.link) b++;
-        if (uri && /^(https?|ftp|file|mailto):/i.test(uri)) link = { line: pos.line, start: a, end: b + 1, url: uri };
+        if (uri && /^(https?|ftp|mailto):/i.test(uri)) link = { line: pos.line, start: a, end: b + 1, url: uri };
       } else {
         for (const [s, en, url] of findLinks(line, this.term.cols)) if (pos.col >= s && pos.col < en) link = { line: pos.line, start: s, end: en, url };
       }

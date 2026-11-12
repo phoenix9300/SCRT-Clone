@@ -165,8 +165,9 @@ transfers, tools, scripting and re-attaching to live sessions.
 
 ## Status and limitations
 
-Hawser is new. It is developed and tested on Linux; the Windows and macOS
-builds compile but have not been exercised yet. Known gaps:
+Hawser is new. It is developed and tested on Linux, including the real
+application window on a virtual display (`npm run e2e:window`); the Windows
+and macOS builds compile but have not been exercised yet. Known gaps:
 
 - Not implemented: SSH1, GSSAPI/Kerberos and smart-card (PKCS#11)
   authentication, SSH compression, TAPI, RDP; Kermit has no sliding

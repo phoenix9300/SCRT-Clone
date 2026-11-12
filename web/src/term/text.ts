@@ -133,7 +133,7 @@ export function findNext(buf: Buffer, cols: number, re: RegExp, from: Pos, backw
   return null;
 }
 
-const URL_RE = /\b(?:https?|ftp|file|ssh|telnet):\/\/[^\s<>"'`{}|\\^\u0000-\u001f]+[^\s<>"'`{}|\\^.,;:!?)\]\u0000-\u001f]/g;
+const URL_RE = /\b(?:https?|ftp):\/\/[^\s<>"'`{}|\\^\u0000-\u001f]+[^\s<>"'`{}|\\^.,;:!?)\]\u0000-\u001f]/g;
 
 /** URLs on a line as [startCol, endColExclusive, url]. */
 export function findLinks(line: Line, cols: number): [number, number, string][] {

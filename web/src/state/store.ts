@@ -38,6 +38,7 @@ export interface Global {
   recentHosts: string[]; downloadDir: string; pythonPath: string;
   /** session paths connected automatically when the application starts */
   autoSessions: string[];
+  recentSessions: string[];
   [k: string]: any;
 }
 
@@ -53,7 +54,7 @@ export const GLOBAL_DEFAULTS: Global = {
       { pattern: "\\b\\d{1,3}(\\.\\d{1,3}){3}(/\\d{1,2})?\\b", regex: true, fg: "#5aa2f0" },
     ],
   },
-  buttonBars: { Default: [] }, activeButtonBar: "Default", shortcuts: {}, recentHosts: [], downloadDir: "", pythonPath: "", autoSessions: [],
+  buttonBars: { Default: [] }, activeButtonBar: "Default", shortcuts: {}, recentHosts: [], downloadDir: "", pythonPath: "", autoSessions: [], recentSessions: [],
 };
 
 export interface Toast { id: number; text: string; kind: "info" | "error"; progress?: number; sticky?: boolean; key?: string }
@@ -255,6 +256,10 @@ export async function connect(req: ConnectRequest): Promise<Tab | null> {
     const tab = adopt(info);
     // state changes may have been broadcast before the tab existed
     rpc.call<ConnInfo>("conn.info", { id: info.id }).then(onConnState).catch(() => {});
+    if (req.session && !req.cloneOf) {
+      const g0 = get().global;
+      setGlobal({ recentSessions: [req.session, ...(g0.recentSessions ?? []).filter((p) => p !== req.session)].slice(0, 12) });
+    }
     const host = req.overrides?.host;
     if (host && !req.session) {
       const label = (req.overrides.username ? req.overrides.username + "@" : "") + host;

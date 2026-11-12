@@ -174,3 +174,6 @@ table.grid tbody tr:hover td { background: var(--hover); }
 .toast .bar i { display: block; height: 100%; background: var(--accent); }
 .boot { height: 100%; display: grid; place-items: center; }
 .boot .card { width: 380px; padding: 22px; background: var(--panel); border: 1px solid var(--border); border-radius: 10px; }
+
+.boundary { position: fixed; left: 50%; top: 20%; transform: translateX(-50%); z-index: 950; max-width: 520px; padding: 14px 16px; background: var(--panel2); border: 1px solid var(--danger); border-radius: var(--radius); box-shadow: var(--shadow); display: grid; gap: 8px; }
+.view .boundary { position: static; transform: none; margin: 24px; }
