@@ -153,14 +153,22 @@ func newScreen(e *env, cn *conn.Conn) *object {
 	}
 	o.method("Send", func(a []any) (any, error) { return nil, send(argStr(a, 0, "")) })
 	o.method("SendKeys", func(a []any) (any, error) { return nil, send(argStr(a, 0, "")) })
+	// sendBreak is a no-op on connection types that have no break (local, raw).
+	sendBreak := func() error {
+		switch cn.Options().Protocol {
+		case "local", "raw":
+			return nil
+		}
+		return cn.SendBreak()
+	}
 	o.method("SendSpecial", func(a []any) (any, error) {
 		switch strings.ToUpper(argStr(a, 0, "")) {
 		case "TN_BREAK", "BREAK", "SERIAL_BREAK":
-			return nil, cn.SendBreak()
+			return nil, sendBreak()
 		}
 		return nil, nil
 	})
-	o.method("SendBreak", func(a []any) (any, error) { return nil, cn.SendBreak() })
+	o.method("SendBreak", func(a []any) (any, error) { return nil, sendBreak() })
 	o.method("Clear", func(a []any) (any, error) { return nil, nil })
 
 	// wait runs a matcher from the right start position and handles the
@@ -177,7 +185,7 @@ func newScreen(e *env, cn *conn.Conn) *object {
 		if err := e.ctx.Err(); err != nil {
 			return res, 0, err
 		}
-		if res.Index < 0 || res.Closed && res.Index < 0 {
+		if res.Index < 0 {
 			matchIndex = 0
 			return res, 0, nil
 		}
@@ -338,7 +346,16 @@ func newSession(e *env, cn *conn.Conn) *object {
 		}
 		return e.openTab(req)
 	})
-	o.method("Disconnect", func(a []any) (any, error) { cn.Disconnect(); return nil, nil })
+	o.method("Disconnect", func(a []any) (any, error) {
+		cn.Disconnect()
+		// the transport closes asynchronously; Connected must be false on return
+		for i := 0; i < 200 && cn.State() != conn.StateDisconnected; i++ {
+			if err := sleepCtx(e.ctx, 15); err != nil {
+				return nil, err
+			}
+		}
+		return nil, nil
+	})
 	o.method("Log", func(a []any) (any, error) {
 		if !argBool(a, 0, true) {
 			cn.StopLog()
@@ -540,11 +557,7 @@ func newTab(e *env, cn *conn.Conn) *object {
 	o.prop("Session", func() (any, error) { return e.session(cn), nil }, nil)
 	o.method("Activate", func(a []any) (any, error) { return nil, e.ui().ActivateTab(e.ctx, cn.ID) })
 	o.method("Clone", func(a []any) (any, error) {
-		ncn, err := e.ui().OpenTab(e.ctx, conn.OpenRequest{CloneOf: cn.ID})
-		if err != nil {
-			return nil, err
-		}
-		return e.tab(ncn.ID)
+		return e.openTab(conn.OpenRequest{CloneOf: cn.ID})
 	})
 	o.method("Close", func(a []any) (any, error) { e.h.Mgr.Close(cn.ID); return nil, nil })
 	o.method("ConnectSftp", func(a []any) (any, error) { return nil, e.ui().OpenSFTP(e.ctx, cn.ID) })
@@ -590,8 +603,23 @@ func newClipboard(e *env) *object {
 func newFileTransfer(e *env) *object {
 	o := newObject(e, "FileTransfer")
 	cn := e.cn
+	// xfer runs a transfer and returns when it has finished.
 	xfer := func(proto, dir string, files []string, dest string) (any, error) {
-		return cn.StartTransfer(conn.TransferRequest{Protocol: proto, Direction: dir, Files: files, Dest: dest}) == nil, nil
+		w := &xferWatch{id: cn.ID, done: make(chan string, 1)}
+		e.h.Mgr.AddSink(w)
+		defer e.h.Mgr.RemoveSink(w)
+		if err := cn.StartTransfer(conn.TransferRequest{Protocol: proto, Direction: dir, Files: files, Dest: dest}); err != nil {
+			return false, err
+		}
+		select {
+		case msg := <-w.done:
+			if msg != "" {
+				return false, errors.New(msg)
+			}
+			return true, nil
+		case <-e.ctx.Done():
+			return false, e.ctx.Err()
+		}
 	}
 	o.method("ZmodemUploadAddFile", func(a []any) (any, error) {
 		cn.QueueZmodemUpload([]string{argStr(a, 0, "")})
@@ -602,8 +630,34 @@ func newFileTransfer(e *env) *object {
 	o.method("ReceiveXmodem", func(a []any) (any, error) { return xfer("xmodem", "download", nil, argStr(a, 0, "")) })
 	o.method("SendYmodem", func(a []any) (any, error) { return xfer("ymodem", "upload", []string{argStr(a, 0, "")}, "") })
 	o.method("ReceiveYmodem", func(a []any) (any, error) { return xfer("ymodem", "download", nil, "") })
-	o.method("SendAscii", func(a []any) (any, error) { return cn.SendASCII(argStr(a, 0, "")) == nil, nil })
+	o.method("SendAscii", func(a []any) (any, error) {
+		if err := cn.SendASCII(argStr(a, 0, "")); err != nil {
+			return false, err
+		}
+		return true, nil
+	})
 	return o
+}
+
+// xferWatch is a manager sink that reports the end of a connection's transfer.
+type xferWatch struct {
+	id   uint32
+	done chan string // "" on success, else the error
+}
+
+func (w *xferWatch) Data(uint32, []byte) {}
+func (w *xferWatch) Prompt(context.Context, uint32, conn.PromptRequest) (conn.PromptResponse, error) {
+	return conn.PromptResponse{}, conn.ErrCancelled
+}
+func (w *xferWatch) Event(name string, payload any) {
+	ev, ok := payload.(conn.TransferEvent)
+	if !ok || name != "xfer.progress" || ev.ID != w.id || (ev.Kind != "done" && ev.Kind != "error") {
+		return
+	}
+	select {
+	case w.done <- ev.Error:
+	default:
+	}
 }
 
 // --------------------------------------------------------- CommandWindow

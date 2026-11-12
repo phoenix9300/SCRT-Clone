@@ -179,6 +179,18 @@ func (h *Host) Start(req RunRequest) (*Run, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	r := &Run{h: h, cancel: cancel, done: make(chan struct{})}
 	h.mu.Lock()
+	for _, o := range h.runs {
+		if o.info.Conn != req.Conn {
+			continue
+		}
+		select {
+		case <-o.done:
+		default:
+			h.mu.Unlock()
+			cancel()
+			return nil, fmt.Errorf("a script (%s) is already running on this session; stop it first", o.info.ID)
+		}
+	}
 	h.seq++
 	r.info = RunInfo{ID: fmt.Sprintf("run%d", h.seq), Conn: req.Conn, Path: req.Path, Lang: lang, State: StateRunning}
 	h.runs = append(h.runs, r)
@@ -201,6 +213,21 @@ func (h *Host) Start(req RunRequest) (*Run, error) {
 	h.mu.Unlock()
 	h.notify(r)
 	e := &env{h: h, ctx: ctx, run: r, cn: cn, path: req.Path, args: req.Args}
+	go func() { // end the run when its tab is closed
+		t := time.NewTicker(250 * time.Millisecond)
+		defer t.Stop()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-t.C:
+				if h.Mgr.Get(req.Conn) == nil {
+					r.stop()
+					return
+				}
+			}
+		}
+	}()
 	go func() {
 		err := func() (err error) {
 			defer func() {

@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 )
 
 //go:embed shim.py
@@ -143,12 +144,22 @@ func runPython(e *env, src string) error {
 	}
 	var stderr limitedBuf
 	cmd.Stderr = &stderr
+	cmd.WaitDelay = 2 * time.Second // do not hang on grandchildren holding the pipes
 	if err := cmd.Start(); err != nil {
 		return err
 	}
 	var waitOnce sync.Once
-	finish := func() { waitOnce.Do(func() { _ = stdin.Close(); _ = cmd.Wait() }) }
-	defer finish()
+	// finish also kills: a script's non-daemon thread must not keep the run alive.
+	finish := func(kill bool) {
+		waitOnce.Do(func() {
+			_ = stdin.Close()
+			if kill {
+				_ = cmd.Process.Kill()
+			}
+			_ = cmd.Wait()
+		})
+	}
+	defer finish(true)
 
 	hs := &handles{byID: map[int]*object{}, byObj: map[*object]int{}}
 	crt := newCRT(e)
@@ -169,7 +180,7 @@ func runPython(e *env, src string) error {
 			if err := e.ctx.Err(); err != nil {
 				return err
 			}
-			finish()
+			finish(false)
 			msg := strings.TrimSpace(stderr.String())
 			if msg == "" {
 				msg = "the Python process ended unexpectedly"
