@@ -26,8 +26,14 @@ if crt.Screen.WaitForString("#", 10):
     crt.Dialog.MessageBox(text)
 ```
 
-Member names are not case-sensitive. Time-outs are in seconds (fractions are
-allowed); omitted or `0` waits forever.
+Member names are not case-sensitive in VBScript and Python. In JavaScript use
+the spelling shown here, or the same name with a lower-case first letter
+(`crt.screen.send`). Time-outs are in seconds (fractions are allowed); omitted
+or `0` waits forever.
+
+Only one script runs on a tab at a time, and a script stops when its tab is
+closed. A Python script that ends with `sys.exit(n)` for a non-zero `n` is
+reported as failed.
 
 ## crt
 
@@ -46,10 +52,10 @@ allowed); omitted or `0` waits forever.
 | Member | Description |
 | --- | --- |
 | `Send(text)`, `SendKeys(text)` | send text to the host (`\r` = Enter) |
-| `SendSpecial(name)`, `SendBreak()` | `"TN_BREAK"` sends a break |
+| `SendSpecial(name)`, `SendBreak()` | `"TN_BREAK"` sends a break where the connection supports one; other names are ignored |
 | `WaitForString(text [, timeout [, ignoreCase]])` | `True` when the text arrives |
 | `WaitForStrings(list… [, timeout])` | 1-based index of the first match, `0` on time-out; also in `MatchIndex` |
-| `ReadString(delimiter… [, timeout])` | text received before the delimiter |
+| `ReadString(delimiter… [, timeout])` | text received before the delimiter; on time-out, the text received so far |
 | `WaitForCursor([timeout])` | `True` when the cursor moves |
 | `Get(row1, col1, row2, col2)` | screen text (rows concatenated) |
 | `Get2(row1, col1, row2, col2)` | screen text with CR LF between rows |
@@ -62,7 +68,7 @@ allowed); omitted or `0` waits forever.
 | Member | Description |
 | --- | --- |
 | `Connected`, `Path`, `RemoteAddress`, `RemotePort`, `LocalAddress` | state |
-| `Connect([arg])` | reconnect, or connect the tab elsewhere: `/S "Folder/Name"`, `/SSH2 /L user /P 22 /PASSWORD pw host`, `/TELNET host [port]` |
+| `Connect([arg])` | reconnect, or connect the (disconnected) tab elsewhere: `/S "Folder/Name"`, `/SSH2 /L user /P 22 /PASSWORD pw host`, `/TELNET host [port]` |
 | `ConnectInTab(arg)` | same, in a new tab; returns the tab |
 | `Disconnect()` | |
 | `Log(start [, append [, raw]])`, `Logging`, `LogFileName` | session logging |
@@ -83,7 +89,7 @@ allowed); omitted or `0` waits forever.
 | `Tab.Caption`, `Tab.Index`, `Tab.Screen`, `Tab.Session` | |
 | `Tab.Activate()`, `Tab.Clone()`, `Tab.Close()`, `Tab.ConnectSftp()` | |
 | `Window.Caption` | window title |
-| `Arguments.Count`, `Arguments.GetArg(i)` | script arguments (0-based); also `crt.Arguments(0)` / `crt.Arguments[0]` |
+| `Arguments.Count`, `Arguments.GetArg(i)` | script arguments (0-based); also `crt.Arguments(0)` in VBScript and `crt.Arguments[0]` in Python |
 | `Clipboard.Text` | read or set the clipboard |
 
 ## FileTransfer, CommandWindow, SessionConfiguration
@@ -91,7 +97,7 @@ allowed); omitted or `0` waits forever.
 | Member | Description |
 | --- | --- |
 | `FileTransfer.ZmodemUploadAddFile(path)`, `ClearZmodemUploadList()` | files sent when the host next starts `rz` |
-| `FileTransfer.SendXmodem(path)`, `ReceiveXmodem(path)`, `SendYmodem(path)`, `ReceiveYmodem()`, `SendAscii(path)` | |
+| `FileTransfer.SendXmodem(path)`, `ReceiveXmodem(path)`, `SendYmodem(path)`, `ReceiveYmodem()`, `SendAscii(path)` | wait for the transfer and raise an error if it fails |
 | `CommandWindow.Text`, `Send()`, `SendToAllSessions` | send a command to this or every session |
 | `SessionConfiguration.GetOption(name)`, `SetOption(name, value)`, `Save([path])`, `ConnectInTab()` | names are JSON paths such as `terminal.scrollback`, or the aliases `Hostname`, `Username`, `Port`, `Protocol Name`, `Emulation`, `Description` |
 
