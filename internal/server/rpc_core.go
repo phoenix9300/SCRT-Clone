@@ -786,6 +786,63 @@ func (s *Server) registerCore() {
 		return vaultStatus(), nil
 	})
 
+	// ------------------------------------------------- shared credentials
+	s.on("credentials.list", func(c *client, _ json.RawMessage) (any, error) {
+		out := []map[string]any{}
+		for _, n := range s.Store.Vault.CredentialNames() {
+			e := map[string]any{"name": n}
+			if cr, ok, err := s.Store.Vault.Credential(n); ok && err == nil {
+				e["username"] = cr.Username
+				e["hasPassword"] = cr.Password != ""
+			}
+			out = append(out, e)
+		}
+		return out, nil
+	})
+	s.on("credentials.save", func(c *client, raw json.RawMessage) (any, error) {
+		p, err := decode[struct {
+			Name     string  `json:"name"`
+			Rename   string  `json:"rename"` // previous name when renaming
+			Username string  `json:"username"`
+			Password *string `json:"password"` // nil keeps the stored password
+		}](raw)
+		if err != nil {
+			return nil, err
+		}
+		cr := store.Credential{Name: strings.TrimSpace(p.Name), Username: p.Username}
+		prev := p.Rename
+		if prev == "" {
+			prev = cr.Name
+		}
+		if old, ok, gerr := s.Store.Vault.Credential(prev); ok && gerr == nil {
+			cr.Password = old.Password
+		} else if gerr != nil {
+			return nil, gerr
+		}
+		if p.Password != nil {
+			cr.Password = *p.Password
+		}
+		if err := s.Store.Vault.SetCredential(cr); err != nil {
+			return nil, err
+		}
+		if p.Rename != "" && p.Rename != cr.Name {
+			s.Store.Vault.DeleteCredential(p.Rename)
+		}
+		s.broadcast("credentials.changed", nil)
+		return true, nil
+	})
+	s.on("credentials.delete", func(c *client, raw json.RawMessage) (any, error) {
+		p, err := decode[struct {
+			Name string `json:"name"`
+		}](raw)
+		if err != nil {
+			return nil, err
+		}
+		s.Store.Vault.DeleteCredential(p.Name)
+		s.broadcast("credentials.changed", nil)
+		return true, nil
+	})
+
 	// --------------------------------------------------------- host keys
 	s.on("hostkeys.list", func(c *client, _ json.RawMessage) (any, error) {
 		l, err := conn.NewHostKeyDB(s.Store.KnownHostsPath(), false).List()

@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"sync"
 
@@ -357,5 +358,55 @@ func (v *Vault) Names() []string {
 	for k := range v.doc.Entries {
 		out = append(out, k)
 	}
+	return out
+}
+
+// Credential is a named user name / password pair shared by several sessions.
+type Credential struct {
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Password string `json:"password,omitempty"`
+}
+
+const credentialPrefix = "credential:"
+
+// Credential returns a shared credential by name.
+func (v *Vault) Credential(name string) (Credential, bool, error) {
+	raw, ok, err := v.Get(credentialPrefix + name)
+	if !ok || err != nil {
+		return Credential{}, ok, err
+	}
+	var c Credential
+	if err := json.Unmarshal([]byte(raw), &c); err != nil {
+		return Credential{}, true, err
+	}
+	c.Name = name
+	return c, true, nil
+}
+
+// SetCredential stores a shared credential.
+func (v *Vault) SetCredential(c Credential) error {
+	if strings.TrimSpace(c.Name) == "" {
+		return errors.New("a credential needs a name")
+	}
+	b, err := json.Marshal(c)
+	if err != nil {
+		return err
+	}
+	return v.Set(credentialPrefix+c.Name, string(b))
+}
+
+// DeleteCredential removes a shared credential.
+func (v *Vault) DeleteCredential(name string) { v.Delete(credentialPrefix + name) }
+
+// CredentialNames lists the stored credentials (works while locked).
+func (v *Vault) CredentialNames() []string {
+	var out []string
+	for _, n := range v.Names() {
+		if strings.HasPrefix(n, credentialPrefix) {
+			out = append(out, strings.TrimPrefix(n, credentialPrefix))
+		}
+	}
+	sort.Strings(out)
 	return out
 }

@@ -134,6 +134,15 @@ func (m *Manager) Open(req OpenRequest, sink Sink) (*Conn, error) {
 	if err != nil {
 		return nil, err
 	}
+	if parent == nil {
+		pw, cerr := applyCredential(m.Store, &opts)
+		if cerr != nil {
+			return nil, cerr
+		}
+		if req.Password == "" {
+			req.Password = pw
+		}
+	}
 	title := req.Title
 	if title == "" {
 		if req.SessionPath != "" {
@@ -549,7 +558,11 @@ func (c *Conn) Reconnect() {
 					deepMergeAny(ov, c.overrides)
 				}
 				if o, err := c.mgr.Store.Resolve(ov); err == nil {
+					pw, _ := applyCredential(c.mgr.Store, &o)
 					c.mu.Lock()
+					if pw != "" {
+						c.password = pw
+					}
 					c.opts = o
 					c.mu.Unlock()
 				}
@@ -580,6 +593,11 @@ func (m *Manager) Retarget(c *Conn, req OpenRequest) error {
 	opts, err := m.Store.Resolve(ov)
 	if err != nil {
 		return err
+	}
+	if pw, cerr := applyCredential(m.Store, &opts); cerr != nil {
+		return cerr
+	} else if req.Password == "" {
+		req.Password = pw
 	}
 	c.mu.Lock()
 	c.opts = opts

@@ -104,6 +104,11 @@ func (m *Manager) OpenSFTP(ctx context.Context, req OpenRequest, sink Sink) (*SF
 	if opts.Protocol != "ssh2" {
 		return nil, errors.New("SFTP is only available for SSH2 sessions")
 	}
+	if pw, cerr := applyCredential(m.Store, &opts); cerr != nil {
+		return nil, cerr
+	} else if req.Password == "" {
+		req.Password = pw
+	}
 	opts.SSH.Forwards = nil
 	dreq := &DialRequest{Opts: opts, SessionPath: req.SessionPath, Store: m.Store, Manager: m, Password: req.Password,
 		Prompter: sinkPrompter{sink: sink}}

@@ -241,3 +241,22 @@ func hexByte(a, b byte) (byte, bool) {
 	y, ok2 := h(b)
 	return x<<4 | y, ok1 && ok2
 }
+
+// applyCredential resolves a session's shared credential: the user name is
+// written into o and the password is returned for one-off use.
+func applyCredential(st *store.Store, o *store.SessionOptions) (password string, err error) {
+	if st == nil || strings.TrimSpace(o.Credential) == "" {
+		return "", nil
+	}
+	c, ok, err := st.Vault.Credential(o.Credential)
+	if err != nil {
+		return "", fmt.Errorf("credential %q: %w", o.Credential, err)
+	}
+	if !ok {
+		return "", fmt.Errorf("credential %q does not exist", o.Credential)
+	}
+	if c.Username != "" {
+		o.Username = c.Username
+	}
+	return c.Password, nil
+}

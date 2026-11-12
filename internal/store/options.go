@@ -13,6 +13,9 @@ type SessionOptions struct {
 	Description string `json:"description"`
 	// SavePassword records that a password for this session lives in the vault.
 	SavePassword bool `json:"savePassword"`
+	// Credential names a shared credential (user name and password kept in
+	// the vault) used instead of Username and the session's own password.
+	Credential string `json:"credential"`
 	// Firewall selects how the transport is reached:
 	//   "" / "none"        direct connection
 	//   "session:<path>"   through another SSH2 session (jump host)

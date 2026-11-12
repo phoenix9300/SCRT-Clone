@@ -70,6 +70,11 @@ func dialThrough(ctx context.Context, req *DialRequest, addr string, timeout tim
 		}
 		req.Prompter.Notice(fmt.Sprintf("Connecting through jump host %s ...\r\n", Target(jopts)))
 		jreq := &DialRequest{Opts: jopts, SessionPath: path, Store: req.Store, Prompter: req.Prompter, Manager: req.Manager, depth: req.depth + 1}
+		if pw, cerr := applyCredential(req.Store, &jreq.Opts); cerr != nil {
+			return nil, nil, fmt.Errorf("jump host %s: %w", path, cerr)
+		} else {
+			jreq.Password = pw
+		}
 		// port forwards configured on the jump session are not started for tunnels
 		jreq.Opts.SSH.Forwards = nil
 		sc, err := sshConnect(ctx, jreq)

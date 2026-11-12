@@ -167,3 +167,40 @@ func TestSSHPasswordAndKeyboardInteractive(t *testing.T) {
 		t.Fatal("cancelled login should be reported as failed")
 	}
 }
+
+func TestSharedCredential(t *testing.T) {
+	port := fakeSSHServer(t, "s3cret")
+	m, sink := newTestManager(t)
+	prompts := 0
+	sink.answers = func(req PromptRequest) PromptResponse {
+		if req.Kind == "hostkey" {
+			return PromptResponse{OK: true, Choice: "save"}
+		}
+		prompts++
+		return PromptResponse{}
+	}
+	if err := m.Store.Vault.SetCredential(store.Credential{Name: "lab-admin", Username: "carol", Password: "s3cret"}); err != nil {
+		t.Fatal(err)
+	}
+	ov := map[string]any{"protocol": "ssh2", "host": "127.0.0.1", "port": port, "username": "ignored", "credential": "lab-admin",
+		"ssh": map[string]any{"auth": []any{"password"}, "useAgent": false, "useOpenSSHKnownHosts": false, "identityFiles": []any{"/nonexistent"}}}
+	if err := m.Store.Save("a", ov); err != nil {
+		t.Fatal(err)
+	}
+	c, err := m.Open(OpenRequest{SessionPath: "a", Cols: 80, Rows: 24}, sink)
+	if err != nil {
+		t.Fatal(err)
+	}
+	waitState(t, c, StateConnected)
+	expect(t, c, 0, "welcome carol")
+	if prompts != 0 {
+		t.Fatalf("credential should log in without prompting (%d prompts)", prompts)
+	}
+	if m.Store.Vault.Has(store.SecretKey("a", "password")) {
+		t.Fatal("a credential's password must not be copied into the session")
+	}
+	ov["credential"] = "missing"
+	if _, err := m.Open(OpenRequest{Overrides: ov}, sink); err == nil || !strings.Contains(err.Error(), "does not exist") {
+		t.Fatalf("missing credential: %v", err)
+	}
+}

@@ -45,6 +45,8 @@ Options:
   --no-browser         same as --browser none
   --config-dir DIR     configuration directory (default %s)
   --allow-remote       accept UI connections from other hosts (token still required)
+  --tls-cert FILE      serve the UI over HTTPS with this certificate …
+  --tls-key FILE       … and private key (use both when listening beyond loopback)
   --script FILE        run a script once the UI is ready
   --arg VALUE          argument passed to the script (repeatable)
   --ui-dir DIR         serve the UI from DIR instead of the built-in bundle (development)
@@ -63,6 +65,8 @@ type options struct {
 	allowRemote bool
 	newInstance bool
 	uiDir       string
+	tlsCert     string
+	tlsKey      string
 	startup     []map[string]any
 }
 
@@ -122,6 +126,10 @@ func parseArgs(args []string) (*options, error) {
 			o.configDir, err = next(&i, a)
 		case "--allow-remote":
 			o.allowRemote = true
+		case "--tls-cert":
+			o.tlsCert, err = next(&i, a)
+		case "--tls-key":
+			o.tlsKey, err = next(&i, a)
 		case "--ui-dir":
 			o.uiDir, err = next(&i, a)
 		case "--new-instance":
@@ -355,6 +363,11 @@ func main() {
 	srv := server.New(st)
 	srv.AllowRemote = opts.allowRemote
 	srv.UIDir = opts.uiDir
+	if (opts.tlsCert == "") != (opts.tlsKey == "") {
+		fmt.Fprintln(os.Stderr, "hawser: --tls-cert and --tls-key must be given together")
+		os.Exit(2)
+	}
+	srv.TLSCert, srv.TLSKey = opts.tlsCert, opts.tlsKey
 	srv.Startup = opts.startup
 	base, err := srv.Listen(opts.listen)
 	if err != nil {

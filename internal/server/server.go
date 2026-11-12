@@ -42,6 +42,8 @@ type Server struct {
 	// AllowRemote disables the loopback Origin restriction (the token is
 	// still required).
 	AllowRemote bool
+	// TLSCert and TLSKey, when set, serve the UI over HTTPS.
+	TLSCert, TLSKey string
 	// UIDir, when set, serves the UI from a directory instead of the
 	// embedded bundle (development).
 	UIDir string
@@ -89,7 +91,11 @@ func (s *Server) Listen(addr string) (string, error) {
 	if ip := net.ParseIP(host); ip != nil && ip.IsUnspecified() {
 		host = "127.0.0.1"
 	}
-	return "http://" + net.JoinHostPort(host, port) + "/", nil
+	scheme := "http"
+	if s.TLSCert != "" {
+		scheme = "https"
+	}
+	return scheme + "://" + net.JoinHostPort(host, port) + "/", nil
 }
 
 // Serve runs the HTTP server until the listener is closed.
@@ -125,6 +131,9 @@ func (s *Server) Serve() error {
 		fileServer.ServeHTTP(w, r)
 	})
 	srv := &http.Server{Handler: mux, ReadHeaderTimeout: 15 * time.Second}
+	if s.TLSCert != "" {
+		return srv.ServeTLS(s.ln, s.TLSCert, s.TLSKey)
+	}
 	return srv.Serve(s.ln)
 }
 
