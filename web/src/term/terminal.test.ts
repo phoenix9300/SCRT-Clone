@@ -94,6 +94,28 @@ describe("terminal core", () => {
     expect(t.screenText().slice(0, 5)).toEqual(["row3", "row4", "row5", "row6", "row7"]);
   });
 
+  it("re-wraps wrapped text when the width changes", () => {
+    const t = mk({ cols: 10, rows: 4 });
+    t.writeString("short\r\n0123456789ABCDEFGHIJKLMNO\r\n中文中文中文x\r\n$ ");
+    expect(t.screenText()).toEqual(["KLMNO", "中文中文中", "文x", "$ "]);
+    t.resize(16, 4);
+    // the 25-character paragraph now needs two rows instead of three
+    const all = t.normal.lines.map((l) => l.text(0, 16, true));
+    expect(all).toEqual(["short", "0123456789ABCDEF", "GHIJKLMNO", "中文中文中文x", "$ "]);
+    expect(t.normal.lines[2].wrapped).toBe(true);
+    expect([t.buf.x, t.buf.y]).toEqual([2, 3]);
+    t.resize(7, 4);
+    const narrow = t.normal.lines.map((l) => l.text(0, 7, true));
+    expect(narrow).toEqual(["short", "0123456", "789ABCD", "EFGHIJK", "LMNO", "中文中", "文中文x", "$ "]);
+    expect(t.rowText(t.buf.y)).toBe("$ ");
+    expect(t.buf.x).toBe(2);
+    // typing continues at the right place after the reflow
+    t.writeString("ok");
+    expect(t.rowText(t.buf.y)).toBe("$ ok");
+    t.resize(10, 4);
+    expect(t.normal.lines.map((l) => l.text(0, 10, true)).slice(1, 4)).toEqual(["0123456789", "ABCDEFGHIJ", "KLMNO"]);
+  });
+
   it("speaks Wyse 50", () => {
     const t = mk({ emulation: "wyse50" });
     const out: string[] = [];

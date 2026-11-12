@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [react()],
   base: "./",
   build: {
-    outDir: path.resolve(__dirname, "../internal/webui/dist/app"),
+    outDir: path.resolve(import.meta.dirname, "../internal/webui/dist/app"),
     emptyOutDir: true,
     target: "es2022",
     chunkSizeWarningLimit: 2500,

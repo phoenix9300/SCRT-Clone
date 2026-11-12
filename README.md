@@ -40,7 +40,7 @@ your inventory.
 - Alternate screen, scroll regions, left/right margins, rectangular area
   operations, mouse reporting (X10 to SGR-pixels), bracketed paste, focus
   events, OSC titles / palette / hyperlinks / clipboard, printer pass-through
-- Large scrollback with regex search, word/line/block selection, URL
+- Large scrollback (re-wrapped when the window width changes) with regex search, word/line/block selection, URL
   detection, keyword highlighting, colour schemes (15 built in, custom ones),
   pixel-exact box-drawing and block characters
 - Character encodings: UTF-8 and 20 legacy code pages
@@ -68,8 +68,8 @@ your inventory.
   `crt.Session`, `crt.Dialog`, tabs, clipboard, file transfer …) for
   **Python**, **JavaScript** and **VBScript** – existing automation scripts
   written for that API run unchanged in many cases, VBScript included, on
-  every platform. Script recorder, logon scripts, examples in
-  [`examples/scripts`](examples/scripts).
+  every platform. Script recorder, logon scripts; see
+  [docs/scripting.md](docs/scripting.md) and [`examples/scripts`](examples/scripts).
 
 **Tools**
 - Key generation wizard, key conversion (OpenSSH ⇄ PEM ⇄ PPK), public-key
@@ -169,7 +169,6 @@ builds compile but have not been exercised yet. Known gaps:
   tests; hardware flow-control selection is Linux/macOS only
 - The VBScript interpreter covers the language broadly but only part of it
   is under test; regular expressions with back-references are rejected
-- Scrollback is not re-wrapped when the window width changes
 - Access to the UI is protected by a random token on a loopback port (the
   token is handed to the browser through a private file, not the command
   line).
