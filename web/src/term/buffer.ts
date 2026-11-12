@@ -1,4 +1,4 @@
-import { BG_EXT, CELL_SIZE, COMBINED, ExtAttr, Line, LineAttr, WIDTH_MASK, WIDTH_SHIFT } from "./cell";
+import { Arena, BG_EXT, CELL_SIZE, COMBINED, ExtAttr, Line, LineAttr, WIDTH_MASK, WIDTH_SHIFT } from "./cell";
 
 /** Saved cursor state (DECSC / DECRC). */
 export interface SavedCursor {
@@ -33,6 +33,7 @@ export class Buffer {
   scrollOffset = 0;
   /** total number of lines discarded from the top of the scrollback */
   trimmed = 0;
+  private readonly arena = new Arena();
 
   constructor(
     public cols: number,
@@ -74,7 +75,8 @@ export class Buffer {
   trim(force = false): void {
     const excess = this.lines.length - this.rows - this.maxScrollback;
     if (excess <= 0) return;
-    if (!force && excess < 256) return;
+    // trimming shifts the whole array, so do it in batches proportional to its size
+    if (!force && excess < Math.max(256, this.maxScrollback >> 4)) return;
     this.lines.splice(0, excess);
     this.trimmed += excess;
     this.clampScrollOffset();
@@ -86,17 +88,19 @@ export class Buffer {
    */
   scrollUp(top: number, bottom: number, bg: number, keep: boolean): boolean {
     const base = this.ybase;
-    const blank = new Line(this.cols, 0, bg);
     if (top === 0 && keep && this.maxScrollback > 0) {
-      const first = this.lines[base];
-      first.compact();
+      // the row moves into scrollback; its full-width array becomes the new blank row
+      const freed = this.lines[base].compact(this.arena);
+      const blank = new Line(this.cols, 0, bg, freed);
       if (bottom === this.rows - 1) this.lines.push(blank);
       else this.lines.splice(base + bottom + 1, 0, blank);
       if (this.scrollOffset > 0) this.scrollOffset++;
       this.trim();
       return true;
     }
-    this.lines.splice(base + top, 1);
+    // the row is discarded: recycle its storage
+    const gone = top === 0 && bottom === this.rows - 1 && base === 0 ? this.lines.shift()! : this.lines.splice(base + top, 1)[0];
+    const blank = new Line(this.cols, 0, bg, gone.data);
     if (bottom === this.rows - 1) this.lines.push(blank);
     else this.lines.splice(base + bottom, 0, blank);
     return false;

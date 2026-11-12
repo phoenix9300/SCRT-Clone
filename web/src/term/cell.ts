@@ -102,8 +102,9 @@ export class Line {
   /** extended attributes keyed by column (cells flagged BG_EXT) */
   ext: Map<number, ExtAttr> | null = null;
 
-  constructor(cols: number, fg = 0, bg = 0) {
-    this.data = new Uint32Array(cols * CELL_SIZE);
+  /** `reuse` is an optional array of the right size to recycle instead of allocating. */
+  constructor(cols: number, fg = 0, bg = 0, reuse?: Uint32Array | null) {
+    this.data = reuse && reuse.length === cols * CELL_SIZE ? reuse : new Uint32Array(cols * CELL_SIZE);
     this.fill(0, cols, fg, bg);
   }
 
@@ -318,10 +319,23 @@ export class Line {
     return 0;
   }
 
-  /** Shrink storage to the used part (called when a line enters scrollback). */
-  compact(): void {
+  /**
+   * Shrink storage to the used part (called when a line enters scrollback).
+   * With an arena the cells move into shared storage and the full-width
+   * array is returned so the caller can recycle it for the next blank row.
+   */
+  compact(arena?: Arena): Uint32Array | null {
     const n = this.trimmedLength();
-    if (n < this.cols) this.data = this.data.slice(0, n * CELL_SIZE);
+    if (n >= this.cols) return null;
+    const full = this.data;
+    if (!arena) {
+      this.data = full.slice(0, n * CELL_SIZE);
+      return null;
+    }
+    const small = arena.alloc(n * CELL_SIZE);
+    small.set(full.subarray(0, n * CELL_SIZE));
+    this.data = small;
+    return full;
   }
 
   /** Plain text of cells [start, end); empty cells become spaces. */
@@ -354,5 +368,27 @@ export class Line {
     l.combined = this.combined ? new Map(this.combined) : null;
     l.ext = this.ext ? new Map(this.ext) : null;
     return l;
+  }
+}
+
+/**
+ * Bump allocator for scrollback rows. Allocating one typed array per row is
+ * the dominant cost of fast scrolling, so rows share large chunks; a chunk is
+ * released by the garbage collector once every row in it has been trimmed.
+ */
+export class Arena {
+  private static readonly CHUNK = 1 << 16;
+  private chunk = new Uint32Array(Arena.CHUNK);
+  private off = 0;
+
+  alloc(words: number): Uint32Array {
+    if (words > Arena.CHUNK >> 3) return new Uint32Array(words);
+    if (this.off + words > Arena.CHUNK) {
+      this.chunk = new Uint32Array(Arena.CHUNK);
+      this.off = 0;
+    }
+    const v = this.chunk.subarray(this.off, this.off + words);
+    this.off += words;
+    return v;
   }
 }
