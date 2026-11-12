@@ -156,6 +156,7 @@ export async function reloadTree(): Promise<void> {
 /** Hooks supplied by the UI layer (commands, menus, dialogs). */
 export const ui = {
   shortcut: (_combo: string, _e: KeyboardEvent, _c: TerminalController | null): boolean => false,
+  nativePaste: (_combo: string): boolean => false,
   contextMenu: (_e: MouseEvent, _c: TerminalController): void => {},
   confirmPaste: async (_text: string): Promise<boolean> => true,
   confirm: async (_title: string, _message: string, _ok?: string): Promise<boolean> => true,
@@ -176,6 +177,7 @@ const host: ControllerHost = {
   },
   keywords: (name) => (name ? (get().global.keywordSets?.[name] ?? []) : []),
   shortcut: (combo, e, c) => ui.shortcut(combo, e, c),
+  nativePaste: (combo) => ui.nativePaste(combo),
   contextMenu: (e, c) => ui.contextMenu(e, c),
   confirmPaste: (t) => ui.confirmPaste(t),
   notify: (kind, ctrl, data) => {

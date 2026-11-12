@@ -80,6 +80,26 @@ module.exports = async ({ page, waitText, cfg, sshd }) => {
   must((await rpc('sessions.get', { path: 'router' })).secrets.password === true, 'saved password was deleted by an emptied field');
   await page.locator('.tab').first().click();
 
+  // --- paste still works where the async clipboard API is unavailable
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  await h.focusTerm();
+  await page.evaluate(() => navigator.clipboard.writeText('echo pasted-$((5+5))'));
+  // headless clipboard reads occasionally reject right after a dialog closed: retry
+  const typed = async () => /echo pasted-\$\(\(5\+5\)\)$/m.test((await page.evaluate(() => window.__hawser.screen().join('\n'))));
+  for (let i = 0; i < 4 && !(await typed()); i++) {
+    await h.focusTerm();
+    await page.keyboard.press('Control+Shift+v');
+    await page.waitForTimeout(600);
+  }
+  must(await typed(), 'Ctrl+Shift+V did not paste');
+  await page.keyboard.press('Enter');
+  await waitText(/^pasted-10/m);
+  await page.evaluate(() => { window.__clip = navigator.clipboard.readText; navigator.clipboard.readText = undefined; });
+  await page.keyboard.press('Shift+Insert');
+  await page.keyboard.press('Enter');
+  await until(async () => ((await page.evaluate(() => window.__hawser.screen().join('\n'))).match(/^pasted-10/gm) || []).length === 2, 'native paste fallback');
+  await page.evaluate(() => { navigator.clipboard.readText = window.__clip; });
+
   // --- Kermit through the Transfer menu over SSH
   if (!fs.existsSync('/usr/bin/gkermit')) { console.log('gkermit not installed: Kermit part skipped'); return; }
   const srv = await sshd();

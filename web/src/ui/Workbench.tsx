@@ -10,7 +10,7 @@ import {
   setGlobal, ui, useApp,
 } from "../state/store";
 import { emulationById } from "../term/emulation";
-import { buildMenus, cmd, printText, runShortcut, terminalContextMenu } from "./commands";
+import { buildMenus, cmd, commandFor, printText, runShortcut, terminalContextMenu } from "./commands";
 import { confirm, openQuickConnect, promptText } from "./dialogs";
 import { feature, tabViews } from "./features";
 import { pickPath } from "./filePicker";
@@ -497,6 +497,7 @@ export function Workbench() {
   const [menu, showMenu] = useContextMenu();
   useEffect(() => {
     ui.shortcut = (combo, e, c) => runShortcut(combo, e, c);
+    ui.nativePaste = (combo) => commandFor(combo) === "paste" && typeof navigator.clipboard?.readText !== "function";
     ui.contextMenu = (e) => showMenu(e, terminalContextMenu());
     // printer pass-through from the host: print dialog, save to a file, or drop
     ui.print = (text) => {

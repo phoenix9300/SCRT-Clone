@@ -186,6 +186,12 @@ function keysFor(command: string): string {
   return "";
 }
 
+/** The command a key combination is bound to (user bindings first). */
+export function commandFor(combo: string): string | undefined {
+  const user = getApp().global.shortcuts ?? {};
+  return user[combo] !== undefined ? user[combo] : DEFAULT_SHORTCUTS[combo];
+}
+
 export function runShortcut(combo: string, _e: KeyboardEvent | null, _c: TerminalController | null): boolean {
   if (combo === "@reconnect") return cmd.reconnect(), true;
   if (combo === "@zoomIn") return cmd.zoomIn(), true;

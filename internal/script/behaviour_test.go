@@ -395,7 +395,7 @@ func TestTwoScriptsTwoTabs(t *testing.T) {
 s = crt.Screen; s.Synchronous = True
 total = 0
 for i in range(25):
-    s.Send("echo %[1]s$((%[2]d+i))x\r")
+    s.Send("echo %[1]s$((%[2]d+%%d))x\r" %% i)
     if not s.WaitForString("%[1]s%%d" %% (%[2]d+i) + "x", 10):
         raise RuntimeError("lost output at %%d" %% i)
     total += i

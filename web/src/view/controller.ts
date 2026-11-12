@@ -34,6 +34,8 @@ export interface ControllerHost {
   keywords(setName: string): Keyword[];
   /** app-level shortcut handling; return true when the key was consumed */
   shortcut(combo: string, e: KeyboardEvent, ctrl: TerminalController): boolean;
+  /** true when this key should be left to the browser's own paste (no clipboard API available) */
+  nativePaste(combo: string): boolean;
   contextMenu(e: MouseEvent, ctrl: TerminalController): void;
   confirmPaste(text: string): Promise<boolean>;
   notify(kind: "title" | "bell" | "activity" | "selection" | "cursor" | "size" | "print", ctrl: TerminalController, data?: any): void;
@@ -435,6 +437,10 @@ export class TerminalController {
     if (e.isComposing || e.keyCode === 229) return;
     const k = keyInfo(e);
     const combo = comboName(k);
+    // Without the async clipboard API (plain HTTP from another machine) the
+    // paste shortcut cannot read the clipboard itself: let the browser paste
+    // into the input element, which arrives through the paste event.
+    if (this.host.nativePaste(combo)) return;
     if (this.host.shortcut(combo, e, this)) {
       e.preventDefault();
       e.stopPropagation();
