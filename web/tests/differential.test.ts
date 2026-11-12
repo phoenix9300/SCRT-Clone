@@ -108,7 +108,8 @@ describe("differential vs xterm headless", () => {
     const rows = parseInt(m[2], 10);
     it(f, async () => {
       const data = new Uint8Array(fs.readFileSync(path.join(dir, f)));
-      const ours = new Terminal({ cols, rows, scrollback: 1000 });
+      // the reference ignores 80/132 column switching (DECCOLM), so disable it here too
+      const ours = new Terminal({ cols, rows, scrollback: 1000, allowResize: false });
       const ref = new XTerminal({ cols, rows, scrollback: 1000, allowProposedApi: true });
       // feed in uneven chunks to exercise sequence splitting, comparing as we go
       let off = 0;

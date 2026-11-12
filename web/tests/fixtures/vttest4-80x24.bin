@@ -1,0 +1,51 @@
+[0c[?1l[?3l[?4l[?5l[?6l[?7h[?8l[?40h[?45l[r[0m[2J[3;10HVT100 test program, version 2.7 (20230201)[4;10HLine speed 38400bd [5;10HChoose test type:
+[6;1H[0J
+          0. Exit
+          1. Test of cursor movements
+          2. Test of screen features
+          3. Test of character sets
+          4. Test of double-sized characters
+          5. Test of keyboard
+          6. Test of terminal reports
+          7. Test of VT52 mode
+          8. Test of VT102 features (Insert/Delete Char/Line)
+          9. Test of known bugs
+          10. Test of reset and self-test
+          11. Test non-VT100 (e.g., VT220, XTERM) terminals
+          12. Modify test-parameters
+
+          Enter choice number (0 - 12): 4
+[2J[2J[1;1H[?3l 80 column mode[5;3Hv------- left margin[7;3HThis is a normal-sized line#3#4#6#5[9;2HThis is a Double-width line#5#3#4#6[11;2H#6#5#4#3This is a Double-width-and-height line[12;2H#6#5#3#4This is a Double-width-and-height line[14;2H#6#5#4#3[2KThis is another such line[15;2H#6#5#3#4This is another such line[17;3H^------- left margin[21;1HThis is not a double-width line[21;6His not#5[23;1HPush <RETURN>
+[21;6H**is**#6[23;1HPush <RETURN>
+[2J[1;1H[?3h132 column mode[5;29Hv------- left margin[7;29HThis is a normal-sized line#3#4#6#5[9;15HThis is a Double-width line#5#3#4#6[11;15H#6#5#4#3This is a Double-width-and-height line[12;15H#6#5#3#4This is a Double-width-and-height line[14;15H#6#5#4#3[2KThis is another such line[15;15H#6#5#3#4This is another such line[17;29H^------- left margin[21;1HThis is not a double-width line[21;6His not#5[23;1HPush <RETURN>
+[21;6H**is**#6[23;1HPush <RETURN>
+[1;1H[3g[8CH[8CH[8CH[8CH[8CH[8CH[8CH[8CH[8CH[8CH[8CH[8CH[8CH[8CH[8CH[8CH[8CH[?3l[2J(0)B[8;1H#3lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk[9;1H#4lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk[10;1H#3x					x[11;1H#4x					x[12;1H#3x					x[13;1H#4x					x)0(B[14;1H#3x                                      x[15;1H#4x                                      x[16;1H#3mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj[17;1H#4mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj(B)B[1;5m[12;3H* The mad programmer strikes again * [13;3H	[6D* The mad programmer strikes again *[0m[22;1HAnother test pattern...  a frame with blinking bold text,
+all in double-height double-width size. Push <RETURN>
+[8;24r[8;1HMMMMMMMMMMMM[r[1;1HExactly half of the box should remain. Push <RETURN>
+[2J[3;10HVT100 test program, version 2.7 (20230201)[4;10HLine speed 38400bd [5;10HChoose test type:
+[6;1H[0J
+          0. Exit
+          1. Test of cursor movements
+          2. Test of screen features
+          3. Test of character sets
+          4. Test of double-sized characters
+          5. Test of keyboard
+          6. Test of terminal reports
+          7. Test of VT52 mode
+          8. Test of VT102 features (Insert/Delete Char/Line)
+          9. Test of known bugs
+          10. Test of reset and self-test
+          11. Test non-VT100 (e.g., VT220, XTERM) terminals
+          12. Modify test-parameters
+
+          Enter choice number (0 - 12): 
+
+
+
+
+
+0
+[2J[?1l[?3l[?5l[?6l[?7h[?8h[r[0m[2J[12;30HThat's all, folks!
+
+
+

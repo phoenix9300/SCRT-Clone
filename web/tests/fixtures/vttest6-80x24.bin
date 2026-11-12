@@ -1,0 +1,133 @@
+[0c[?1l[?3l[?4l[?5l[?6l[?7h[?8l[?40h[?45l[r[0m[2J[3;10HVT100 test program, version 2.7 (20230201)[4;10HLine speed 38400bd [5;10HChoose test type:
+[6;1H[0J
+          0. Exit
+          1. Test of cursor movements
+          2. Test of screen features
+          3. Test of character sets
+          4. Test of double-sized characters
+          5. Test of keyboard
+          6. Test of terminal reports
+          7. Test of VT52 mode
+          8. Test of VT102 features (Insert/Delete Char/Line)
+          9. Test of known bugs
+          10. Test of reset and self-test
+          11. Test non-VT100 (e.g., VT220, XTERM) terminals
+          12. Modify test-parameters
+
+          Enter choice number (0 - 12): 6
+[2J[2J[3;10HMenu 6: Terminal Reports/Responses[5;10HChoose test type:
+[6;1H[0J
+          0. Exit
+          1. <ENQ> (AnswerBack Message)
+          2. Set/Reset Mode - LineFeed / Newline
+          3. Device Status Report (DSR)                 VT100 & up
+          4. Primary Device Attributes (DA)             VT100 & up
+          5. Secondary Device Attributes (DA)           VT220 & up
+          6. Tertiary Device Attributes (DA)            VT420
+          7. Request Terminal Parameters (DECREQTPARM)  VT100
+
+          Enter choice number (0 - 7): 1
+[2J[5;1HThis is a test of the ANSWERBACK MESSAGE. (To load the A.B.M.
+see the TEST KEYBOARD part of this program). Below here, the
+current answerback message in your terminal should be
+displayed. Finish this test with RETURN.
+[10;1H[10;1H[7m <13> [m[12;1HPush <RETURN>
+[2J[3;10HMenu 6: Terminal Reports/Responses[5;10HChoose test type:
+[6;1H[0J
+          0. Exit
+          1. <ENQ> (AnswerBack Message)
+          2. Set/Reset Mode - LineFeed / Newline
+          3. Device Status Report (DSR)                 VT100 & up
+          4. Primary Device Attributes (DA)             VT100 & up
+          5. Secondary Device Attributes (DA)           VT220 & up
+          6. Tertiary Device Attributes (DA)            VT420
+          7. Request Terminal Parameters (DECREQTPARM)  VT100
+
+          Enter choice number (0 - 7): 
+2
+[2J[1;1HTest of LineFeed/NewLine mode.
+[3;1H[20hNewLine mode set. Push the RETURN key: [4;1H[0K[7m <13> [m -- Not expected[6;1H[20lNewLine mode reset. Push the RETURN key: [7;1H[0K[7m <13> [m -- OK[9;1HPush <RETURN>
+[2J[3;10HMenu 6: Terminal Reports/Responses[5;10HChoose test type:
+[6;1H[0J
+          0. Exit
+          1. <ENQ> (AnswerBack Message)
+          2. Set/Reset Mode - LineFeed / Newline
+          3. Device Status Report (DSR)                 VT100 & up
+          4. Primary Device Attributes (DA)             VT100 & up
+          5. Secondary Device Attributes (DA)           VT220 & up
+          6. Tertiary Device Attributes (DA)            VT420
+          7. Request Terminal Parameters (DECREQTPARM)  VT100
+
+          Enter choice number (0 - 7): 3
+[2J[1;1HTest of Device Status Report 5 (report terminal status).[2;1H[5n[2;1H[0KReport is:[7m <27> [ 0 n [m -- means "TERMINAL OK"[4;1HTest of Device Status Report 6 (report cursor position).
+[5;1H[6n[5;1H[0KReport is:[7m <27> [ 5 ; 1 R <13> [m -- Unknown response![?6h[4;18r[5;1H[6n[5;1H[0KReport is:[7m <27> [ 8 ; 1 R <13> [m -- Unknown response![?6l[r[23;1HPush <RETURN>
+[2J[3;10HMenu 6: Terminal Reports/Responses[5;10HChoose test type:
+[6;1H[0J
+          0. Exit
+          1. <ENQ> (AnswerBack Message)
+          2. Set/Reset Mode - LineFeed / Newline
+          3. Device Status Report (DSR)                 VT100 & up
+          4. Primary Device Attributes (DA)             VT100 & up
+          5. Secondary Device Attributes (DA)           VT220 & up
+          6. Tertiary Device Attributes (DA)            VT420
+          7. Request Terminal Parameters (DECREQTPARM)  VT100
+
+          Enter choice number (0 - 7): 
+
+
+4
+[2J[1;1HTest of Device Attributes report (what are you)
+[0c[3;1H[0KReport is:[7m <27> [ ? 1 ; 2 c [m -- means VT100 with AVO (could be a VT102)
+ Legend:  AVO = Advanced Video Option
+[23;1HPush <RETURN>
+[2J[3;10HMenu 6: Terminal Reports/Responses[5;10HChoose test type:
+[6;1H[0J
+          0. Exit
+          1. <ENQ> (AnswerBack Message)
+          2. Set/Reset Mode - LineFeed / Newline
+          3. Device Status Report (DSR)                 VT100 & up
+          4. Primary Device Attributes (DA)             VT100 & up
+          5. Secondary Device Attributes (DA)           VT220 & up
+          6. Tertiary Device Attributes (DA)            VT420
+          7. Request Terminal Parameters (DECREQTPARM)  VT100
+
+          Enter choice number (0 - 7): 
+
+5
+[2J[1;1HTesting Secondary Device Attributes (Firmware version)
+[>c[3;10H[7m <27> [ > 0 ; 2 7 6 ; 0 c [m[4;10HPp=0 (unknown)[5;10HPv=276, firmware version 27.6[6;10HPc=0, ROM cartridge registration number ok[23;1HPush <RETURN>
+[2J[3;10HMenu 6: Terminal Reports/Responses[5;10HChoose test type:
+[6;1H[0J
+          0. Exit
+          1. <ENQ> (AnswerBack Message)
+          2. Set/Reset Mode - LineFeed / Newline
+          3. Device Status Report (DSR)                 VT100 & up
+          4. Primary Device Attributes (DA)             VT100 & up
+          5. Secondary Device Attributes (DA)           VT220 & up
+          6. Tertiary Device Attributes (DA)            VT420
+          7. Request Terminal Parameters (DECREQTPARM)  VT100
+
+          Enter choice number (0 - 7): 
+
+0
+[2J[2J[3;10HVT100 test program, version 2.7 (20230201)[4;10HLine speed 38400bd [5;10HChoose test type:
+[6;1H[0J
+          0. Exit
+          1. Test of cursor movements
+          2. Test of screen features
+          3. Test of character sets
+          4. Test of double-sized characters
+          5. Test of keyboard
+          6. Test of terminal reports
+          7. Test of VT52 mode
+          8. Test of VT102 features (Insert/Delete Char/Line)
+          9. Test of known bugs
+          10. Test of reset and self-test
+          11. Test non-VT100 (e.g., VT220, XTERM) terminals
+          12. Modify test-parameters
+
+          Enter choice number (0 - 12): 0
+[2J[?1l[?3l[?5l[?6l[?7h[?8h[r[0m[2J[12;30HThat's all, folks!
+
+
+

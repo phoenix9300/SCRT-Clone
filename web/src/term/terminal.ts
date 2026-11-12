@@ -1085,7 +1085,12 @@ export class Terminal implements ParserHandler {
           l.wrapped = false;
           l.lineAttr = LineAttr.Normal;
           l.fill(0, this.cols, 0, 0);
-          for (let x = 0; x < this.cols; x++) l.data[x * CELL_SIZE] = 0x45 | WIDTH_1;
+          // like xterm: no attributes, but the current colours
+          for (let x = 0; x < this.cols; x++) {
+            l.data[x * CELL_SIZE] = 0x45 | WIDTH_1;
+            l.data[x * CELL_SIZE + 1] = this.fg & COLOR_BITS;
+            l.data[x * CELL_SIZE + 2] = this.bg & COLOR_BITS;
+          }
         }
         buf.x = 0;
         buf.y = 0;
