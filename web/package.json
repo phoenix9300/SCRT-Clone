@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit -p .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "for s in local extras reattach options tools sftp script workbench sessions xfer sshtools scripting; do node e2e/run.cjs $s || exit 1; done",
+    "e2e": "for s in local dnd extras reattach options tools sftp script workbench sessions xfer sshtools scripting; do node e2e/run.cjs $s || exit 1; done",
     "e2e:window": "xvfb-run -a node e2e/appwindow.cjs"
   },
   "dependencies": {
