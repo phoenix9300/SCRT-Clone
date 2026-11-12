@@ -162,7 +162,11 @@ function SessionManager() {
       { label: "Connect", run: () => void connect({ session: n.path }) },
       { label: "Connect SFTP", disabled: n.summary?.protocol !== "ssh2", run: () => feature("sftpOpen", { session: n.path }) },
       { sep: true }, { label: "Properties…", run: () => feature("sessionOptions", { path: n.path }) },
-      { label: "Duplicate…", run: () => duplicate(n) });
+      { label: "Duplicate…", run: () => duplicate(n) },
+      { label: "Open at Startup", checked: (getApp().global.autoSessions ?? []).includes(n.path), run: () => {
+        const cur = getApp().global.autoSessions ?? [];
+        setGlobal({ autoSessions: cur.includes(n.path) ? cur.filter((x) => x !== n.path) : [...cur, n.path] });
+      } });
     if (n?.folder) items.push({ label: "Connect All", run: () => (n.children ?? []).filter((c) => !c.folder).forEach((c) => void connect({ session: c.path })) }, { sep: true });
     if (n) items.push({ label: "Rename…", run: () => rename(n) }, { label: "Delete…", run: () => remove(n) }, { sep: true });
     items.push({ label: "New Session…", run: () => feature("sessionOptions", { isNew: true, folder }) }, { label: "New Folder…", run: () => newFolder(folder) },

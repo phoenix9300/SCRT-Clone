@@ -248,6 +248,7 @@ export function buildMenus(): { title: string; items: MenuItem[] }[] {
       it("Command Window", "toggleCommandWindow", { checked: g.showCommandWindow }), sep,
       { label: "Theme", children: (["dark", "light", "system"] as const).map((th) => ({ label: th[0].toUpperCase() + th.slice(1), checked: g.theme === th, run: () => setGlobal({ theme: th }) })) },
       it("Zoom In", "zoomIn"), it("Zoom Out", "zoomOut"), it("Reset Zoom", "zoomReset"), it("Full Screen", "fullScreen"), sep,
+      { label: "Raw Data (Hex View)…", disabled: off, run: () => feature("hexView", { conn: t?.connId }) },
       it("Scroll to Top", "scrollTop", { disabled: off }), it("Scroll to Bottom", "scrollBottom", { disabled: off }),
     ] },
     { title: "Options", items: [
@@ -261,7 +262,9 @@ export function buildMenus(): { title: string; items: MenuItem[] }[] {
       { label: "Ymodem Upload…", disabled: !up, run: () => feature("xferStart", { conn: t!.connId, protocol: "ymodem", direction: "upload" }) },
       { label: "Ymodem Download", disabled: !up, run: () => rpc.call("xfer.start", { id: t!.connId, protocol: "ymodem", direction: "download" }).catch(fail) },
       { label: "Xmodem Upload…", disabled: !up, run: () => feature("xferStart", { conn: t!.connId, protocol: "xmodem", direction: "upload" }) },
-      { label: "Xmodem Download…", disabled: !up, run: () => feature("xferStart", { conn: t!.connId, protocol: "xmodem", direction: "download" }) }, sep,
+      { label: "Xmodem Download…", disabled: !up, run: () => feature("xferStart", { conn: t!.connId, protocol: "xmodem", direction: "download" }) },
+      { label: "Kermit Upload…", disabled: !up, run: () => feature("xferStart", { conn: t!.connId, protocol: "kermit", direction: "upload" }) },
+      { label: "Kermit Download", disabled: !up, run: () => rpc.call("xfer.start", { id: t!.connId, protocol: "kermit", direction: "download" }).catch(fail) }, sep,
       it("Connect SFTP Tab", "sftpTab", { disabled: !ssh }), { label: "TFTP Server…", run: () => feature("tftp") },
     ] },
     { title: "Script", items: [
@@ -273,7 +276,7 @@ export function buildMenus(): { title: string; items: MenuItem[] }[] {
       { label: "Manage Agent Keys…", run: () => feature("agentKeys") }, { label: "Host Key Database…", run: () => feature("hostKeys") }, sep,
       { label: "Port Forwarding…", disabled: !ssh, run: () => feature("forwards", { conn: t!.connId }) },
       { label: "Connection Details…", disabled: off, run: () => feature("connInfo", { conn: t?.connId }) }, sep,
-      { label: "Credential Vault…", run: () => feature("vault") },
+      { label: "Credentials…", run: () => feature("credentials") }, { label: "Credential Vault…", run: () => feature("vault") },
       { label: "Import Sessions…", run: () => feature("importSessions") }, { label: "Export Sessions…", run: () => feature("exportSessions") },
     ] },
     { title: "Window", items: [

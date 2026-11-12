@@ -355,11 +355,11 @@ features.sftpOpen = async (arg: { conn?: number; session?: string; overrides?: a
 
 // ----------------------------------------------- serial-style transfers
 
-features.xferStart = async (arg: { conn: number; protocol: "zmodem" | "ymodem" | "xmodem" | "ascii"; direction: "upload" | "download" }) => {
+features.xferStart = async (arg: { conn: number; protocol: "zmodem" | "ymodem" | "xmodem" | "kermit" | "ascii"; direction: "upload" | "download" }) => {
   const { conn: id, protocol, direction } = arg;
   try {
     if (direction === "upload") {
-      const many = protocol === "zmodem" || protocol === "ymodem";
+      const many = protocol === "zmodem" || protocol === "ymodem" || protocol === "kermit";
       const files = await pickPaths({ title: `${protocol.toUpperCase()} upload`, mode: many ? "openMany" : "open", ok: "Send" });
       if (!files?.length) return;
       await rpc.call("xfer.start", { id, protocol, direction, files });

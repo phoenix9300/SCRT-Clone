@@ -162,6 +162,11 @@ func (c *Conn) StopRecording() []RecordedStep {
 	if len(r.pending) > 0 {
 		steps = append(steps, RecordedStep{Expect: r.prompt, Send: string(r.pending)})
 	}
+	// The prompt in front of the first command was printed before recording
+	// began; a replay starts at that same prompt and must not wait for it.
+	if len(steps) > 0 {
+		steps[0].Expect = ""
+	}
 	return steps
 }
 

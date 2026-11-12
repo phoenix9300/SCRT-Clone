@@ -968,6 +968,12 @@ func (k *kermit) receive(sink Sink) error {
 			if err == nil {
 				var clean string
 				if clean, err = sanitizeName(string(name)); err == nil {
+					// Kermit senders transmit names in upper case by convention;
+					// like other receivers on case-sensitive systems, store an
+					// all-upper-case name in lower case.
+					if clean == strings.ToUpper(clean) {
+						clean = strings.ToLower(clean)
+					}
 					info = FileInfo{Name: clean, Size: -1}
 				}
 			}

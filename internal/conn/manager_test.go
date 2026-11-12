@@ -136,10 +136,15 @@ func TestRecorderGeneratesScripts(t *testing.T) {
 	waitState(t, c, StateConnected)
 	expect(t, c, 0, "$ ")
 	c.StartRecording()
+	c.Input([]byte("echo first\r"))
+	pos := expect(t, c, 0, "first\r\n")
+	expect(t, c, pos, "$ ")
 	c.Input([]byte("echo \"hi\"\r"))
-	expect(t, c, 0, "hi\r\n")
+	expect(t, c, pos, "hi\r\n")
 	steps := c.StopRecording()
-	if len(steps) != 1 || !strings.HasSuffix(steps[0].Expect, "$ ") || steps[0].Send != "echo \"hi\"\r" {
+	// the first command is sent without waiting: its prompt predates the recording
+	if len(steps) != 2 || steps[0].Expect != "" || steps[0].Send != "echo first\r" ||
+		!strings.HasSuffix(steps[1].Expect, "$ ") || steps[1].Send != "echo \"hi\"\r" {
 		t.Fatalf("recorded steps: %+v", steps)
 	}
 	py := GenerateScript(steps, "python")

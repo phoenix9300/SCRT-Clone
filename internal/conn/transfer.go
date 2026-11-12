@@ -293,7 +293,7 @@ func (c *Conn) AnswerUpload(files []string) bool {
 
 // TransferRequest starts an in-band transfer from the UI.
 type TransferRequest struct {
-	Protocol  string   `json:"protocol"`  // zmodem | ymodem | xmodem | ascii
+	Protocol  string   `json:"protocol"`  // zmodem | ymodem | xmodem | kermit | ascii
 	Direction string   `json:"direction"` // upload | download
 	Files     []string `json:"files"`     // local files to send
 	Dest      string   `json:"dest"`      // xmodem download: local file to write
@@ -365,16 +365,19 @@ func (c *Conn) runTransfer(d *diverter, protocol, direction string, files []stri
 
 	var err error
 	switch {
-	case direction == "download" && (protocol == "zmodem" || protocol == "ymodem"):
+	case direction == "download" && (protocol == "zmodem" || protocol == "ymodem" || protocol == "kermit"):
 		if merr := os.MkdirAll(dir, 0o755); merr != nil {
 			err = merr
 			xfer.Abort(d)
 			break
 		}
 		sink := &xfer.DirSink{Dir: dir, Overwrite: to.ZmodemOverwrite, Resume: to.ZmodemResume}
-		if protocol == "zmodem" {
+		switch protocol {
+		case "zmodem":
 			err = xfer.ZmodemReceive(ctx, d, sink, opts)
-		} else {
+		case "kermit":
+			err = xfer.KermitReceive(ctx, d, sink, opts)
+		default:
 			err = xfer.YmodemReceive(ctx, d, sink, opts)
 		}
 	case direction == "download" && protocol == "xmodem":
@@ -416,6 +419,8 @@ func (c *Conn) runTransfer(d *diverter, protocol, direction string, files []stri
 			err = xfer.ZmodemSend(ctx, d, sf, opts)
 		case "ymodem":
 			err = xfer.YmodemSend(ctx, d, sf, opts)
+		case "kermit":
+			err = xfer.KermitSend(ctx, d, sf, opts)
 		case "xmodem":
 			var r io.ReadSeekCloser
 			if r, err = sf[0].Open(); err == nil {

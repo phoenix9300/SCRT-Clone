@@ -36,6 +36,8 @@ export interface Global {
   buttonBars: Record<string, ButtonDef[]>; activeButtonBar: string;
   shortcuts: Record<string, string>; // combo -> command id
   recentHosts: string[]; downloadDir: string; pythonPath: string;
+  /** session paths connected automatically when the application starts */
+  autoSessions: string[];
   [k: string]: any;
 }
 
@@ -51,7 +53,7 @@ export const GLOBAL_DEFAULTS: Global = {
       { pattern: "\\b\\d{1,3}(\\.\\d{1,3}){3}(/\\d{1,2})?\\b", regex: true, fg: "#5aa2f0" },
     ],
   },
-  buttonBars: { Default: [] }, activeButtonBar: "Default", shortcuts: {}, recentHosts: [], downloadDir: "", pythonPath: "",
+  buttonBars: { Default: [] }, activeButtonBar: "Default", shortcuts: {}, recentHosts: [], downloadDir: "", pythonPath: "", autoSessions: [],
 };
 
 export interface Toast { id: number; text: string; kind: "info" | "error"; progress?: number; sticky?: boolean; key?: string }
@@ -423,6 +425,10 @@ export async function boot(): Promise<void> {
     if (c.state !== "connected") controllers.get(tab.id)?.status(c.message || "Disconnected", c.failed ? "error" : "info");
   }
   if (info.startup?.length) ui.onStartup(info.startup);
+  else if (!conns.length) {
+    // sessions marked "Open at Startup" (only for a fresh start, not a window reload)
+    for (const path of get().global.autoSessions ?? []) void connect({ session: path });
+  }
 }
 
 export function addSftpTab(sftp: { id: number; title: string; home: string; session: string }): void {

@@ -81,7 +81,7 @@ function Picker({ o, close }: { o: PickOptions; close: (v?: string[]) => void })
       <div className="row" style={{ padding: "10px 12px 6px" }}>
         <button className="tb-btn" title="Parent folder" onClick={() => parent && load(parent)}><ArrowUp size={16} /></button>
         <button className="tb-btn" title="Home" onClick={() => load("~")}><Home size={16} /></button>
-        <input className="input grow mono" value={pathText} aria-label="Path" onChange={(e) => { typed.current = true; setPathText(e.target.value); }}
+        <input className="input grow mono" value={pathText} aria-label="Path" onFocus={(e) => e.target.select()} onChange={(e) => { typed.current = true; setPathText(e.target.value); }}
           onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); e.preventDefault(); load(pathText); } }} />
       </div>
       {error && <div className="error-text" style={{ padding: "0 14px 6px" }}>{error}</div>}

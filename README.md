@@ -55,13 +55,16 @@ your inventory.
 - Logon actions (expect/send), mapped keys, configurable shortcuts, session
   locking, multi-line paste confirmation, paced sending for slow devices
 - Credential vault: passwords and passphrases are stored encrypted
-  (XChaCha20-Poly1305), optionally under an Argon2id master passphrase
+  (XChaCha20-Poly1305), optionally under an Argon2id master passphrase;
+  shared credentials that many sessions can reference
+- Sessions that open automatically at startup; raw-data (hex) view of the
+  bytes sent and received
 
 **File transfer**
 - SFTP tab: dual-pane browser, drag and drop (including from the desktop),
   directory trees, resume, permissions, quick edit, transfer queue
 - ZMODEM (auto-start, both directions, crash recovery), YMODEM, XMODEM,
-  ASCII send; built-in TFTP server
+  Kermit, ASCII send; built-in TFTP server
 
 **Scripting**
 - A `crt` object model (`crt.Screen.WaitForString`, `Send`, `ReadString`,
@@ -149,14 +152,16 @@ make test
 
 runs the Go suites (the connection tests start a private OpenSSH server and
 use `lrzsz` when they are installed, and skip otherwise) and the emulator
-tests, which replay output recorded from vim, htop, mc, tmux, less, top and
-nano and compare every cell with a reference emulator.
+tests, which replay output recorded from vim, htop, mc, tmux, less, top,
+nano and `vttest` and compare every cell with a reference emulator.
 
 ```bash
 make build && cd web && npm run e2e
 ```
 
-drives the real application in headless Chromium (needs Playwright).
+drives the real application in headless Chromium (needs Playwright): twelve
+scenarios covering the workbench, session manager, options, SFTP, in-band
+transfers, tools, scripting and re-attaching to live sessions.
 
 ## Status and limitations
 
@@ -164,16 +169,24 @@ Hawser is new. It is developed and tested on Linux; the Windows and macOS
 builds compile but have not been exercised yet. Known gaps:
 
 - Not implemented: SSH1, GSSAPI/Kerberos and smart-card (PKCS#11)
-  authentication, SSH compression, Kermit, TAPI, RDP
-- Serial ports, X11 forwarding and SOCKS4 / HTTP proxies have no automated
-  tests; hardware flow-control selection is Linux/macOS only
-- The VBScript interpreter covers the language broadly but only part of it
-  is under test; regular expressions with back-references are rejected
+  authentication, SSH compression, TAPI, RDP; Kermit has no sliding
+  windows or text mode
+- Serial ports are tested over a pseudo-terminal only, not real hardware;
+  X11 forwarding is tested up to the cookie handshake, not against an X
+  server; hardware flow-control selection is Linux/macOS only
+- VBScript: regular expressions with back-references or look-ahead are
+  rejected, and a few rarely used language details differ (see
+  `internal/vbs/README.md`)
+- ZMODEM downloads start automatically when the host asks (they are saved
+  to the session's download folder, never overwrite silently and never
+  become executable); turn this off per session if you connect to hosts you
+  do not trust
 - Access to the UI is protected by a random token on a loopback port (the
   token is handed to the browser through a private file, not the command
   line).
-  `--listen` on a public address exposes a remote shell launcher: only do
-  that behind TLS and a trusted network
+  Other machines are refused unless you pass `--allow-remote`; that exposes
+  a remote shell launcher, so combine it with `--tls-cert` / `--tls-key`
+  and a trusted network
 
 ## Licence
 

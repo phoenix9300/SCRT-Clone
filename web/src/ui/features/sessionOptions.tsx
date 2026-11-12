@@ -297,6 +297,7 @@ function PageBody(p: {
           </Field>
         </>}
         {["ssh2", "telnet", "telnet-tls", "rlogin"].includes(b.get("protocol")) && BText(b, "Username", "username")}
+        {b.get("protocol") === "ssh2" && <CredentialSelect value={b.get("credential") ?? ""} onChange={(v) => b.set("credential", v)} />}
         {!p.isDefault && ["ssh2", "telnet", "telnet-tls", "rlogin"].includes(b.get("protocol")) &&
           <SecretInput label="Password" k="password" have={p.have} secrets={p.secrets} setSecret={p.setSecret} hint="Stored encrypted in the credential vault." />}
         {!p.isDefault && BText(b, "Description", "description")}
@@ -605,4 +606,19 @@ function PageBody(p: {
       </>);
   }
   return null;
+}
+
+/** Chooses a shared credential (Tools → Credentials…) instead of the session's own login. */
+function CredentialSelect(p: { value: string; onChange: (v: string) => void }) {
+  const [names, setNames] = useState<string[]>([]);
+  useEffect(() => {
+    rpc.call<{ name: string }[]>("credentials.list").then((l) => setNames(l.map((c) => c.name))).catch(() => {});
+  }, []);
+  const opts: (readonly [string, string])[] = [["", "None (use the username and password above)"], ...names.map((n) => [n, n] as const)];
+  if (p.value && !names.includes(p.value)) opts.push([p.value, p.value + " (missing)"]);
+  return (
+    <Field label="Credential" hint="A shared login from Tools → Credentials… overrides the username and password.">
+      <Select value={p.value} onChange={p.onChange} options={opts} />
+    </Field>
+  );
 }

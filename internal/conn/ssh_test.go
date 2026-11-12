@@ -514,3 +514,54 @@ func TestTelnetNegotiation(t *testing.T) {
 		t.Fatalf("IAC unescaping wrong: %q", sink.text(c.ID))
 	}
 }
+
+func TestSSHKermit(t *testing.T) {
+	if _, err := exec.LookPath("gkermit"); err != nil {
+		t.Skip("gkermit not installed")
+	}
+	f := startSSHD(t)
+	m, sink := newTestManager(t)
+	sink.answers = acceptAll
+	down := t.TempDir()
+	ov := f.overrides()
+	ov["transfer"] = map[string]any{"downloadDir": down, "zmodemAuto": false}
+	c, err := m.Open(OpenRequest{Overrides: ov, Cols: 80, Rows: 24}, sink)
+	if err != nil {
+		t.Fatal(err)
+	}
+	waitState(t, c, StateConnected)
+	src := t.TempDir()
+	payload := make([]byte, 200_000)
+	_, _ = rand.Read(payload)
+	_ = os.WriteFile(filepath.Join(src, "kfile.bin"), payload, 0o644)
+
+	// download: the host sends, we receive into the download directory
+	c.Input([]byte("cd " + src + " && gkermit -i -s kfile.bin; echo ks-fin$((1+1))\n"))
+	time.Sleep(300 * time.Millisecond)
+	if err := c.StartTransfer(TransferRequest{Protocol: "kermit", Direction: "download"}); err != nil {
+		t.Fatal(err)
+	}
+	expect(t, c, 0, "ks-fin2")
+	got, err := os.ReadFile(filepath.Join(down, "kfile.bin"))
+	if err != nil || !bytes.Equal(got, payload) {
+		ents, _ := os.ReadDir(down)
+		var names []string
+		for _, e := range ents {
+			names = append(names, e.Name())
+		}
+		t.Fatalf("Kermit download wrong: err=%v len=%d dir=%v output=%q", err, len(got), names, tail([]byte(c.TextSlice(0, c.TextEnd())), 300))
+	}
+
+	// upload: the host waits with "gkermit -r"
+	up := t.TempDir()
+	c.Input([]byte("cd " + up + " && gkermit -i -r; echo kr-fin$((1+1))\n"))
+	time.Sleep(300 * time.Millisecond)
+	if err := c.StartTransfer(TransferRequest{Protocol: "kermit", Direction: "upload", Files: []string{filepath.Join(src, "kfile.bin")}}); err != nil {
+		t.Fatal(err)
+	}
+	expect(t, c, 0, "kr-fin2")
+	got, err = os.ReadFile(filepath.Join(up, "kfile.bin"))
+	if err != nil || !bytes.Equal(got, payload) {
+		t.Fatalf("Kermit upload wrong: err=%v len=%d", err, len(got))
+	}
+}
