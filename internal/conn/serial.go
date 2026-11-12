@@ -63,7 +63,13 @@ func dialSerial(ctx context.Context, req *DialRequest) (Transport, error) {
 	mode.InitialStatusBits = &serial.ModemOutputBits{DTR: o.DTR, RTS: o.RTS}
 	p, err := serial.Open(o.Port, mode)
 	if err != nil {
-		return nil, fmt.Errorf("cannot open %s: %w", o.Port, err)
+		// Virtual ports and some adapters have no modem-control lines; setting
+		// the initial DTR/RTS state fails there, so retry without it.
+		mode.InitialStatusBits = nil
+		var err2 error
+		if p, err2 = serial.Open(o.Port, mode); err2 != nil {
+			return nil, fmt.Errorf("cannot open %s: %w", o.Port, err)
+		}
 	}
 	if err := applyFlowControl(o.Port, o.Flow); err != nil {
 		req.Prompter.Notice(fmt.Sprintf("Flow control (%s) could not be applied: %v\r\n", o.Flow, err))

@@ -24,7 +24,7 @@ type sshdFixture struct {
 	dir       string
 }
 
-func startSSHD(t *testing.T) *sshdFixture {
+func startSSHD(t *testing.T, extraConfig ...string) *sshdFixture {
 	t.Helper()
 	sshd, err := exec.LookPath("sshd")
 	if err != nil {
@@ -64,6 +64,9 @@ AllowTcpForwarding yes
 Subsystem sftp internal-sftp
 LogLevel ERROR
 `, port, dir, dir, dir)
+	for _, e := range extraConfig {
+		cfg += e + "\n"
+	}
 	cfgPath := filepath.Join(dir, "sshd_config")
 	_ = os.WriteFile(cfgPath, []byte(cfg), 0o600)
 	_ = os.MkdirAll("/run/sshd", 0o755)

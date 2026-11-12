@@ -158,7 +158,9 @@ func (l *sessionLog) event(kind string) {
 	if l.closed {
 		return
 	}
-	l.flushLineLocked(true)
+	if len(l.line) > 0 { // end a partial line, but never emit an empty one
+		l.flushLineLocked(true)
+	}
 	switch kind {
 	case "connect":
 		l.custom(l.opts.OnConnect)

@@ -45,7 +45,7 @@ func parseDisplay(display string) (network, address string, screen uint32, err e
 	if i < 0 {
 		return "", "", 0, fmt.Errorf("malformed display %q", display)
 	}
-	host := display[:i]
+	host := strings.Trim(display[:i], "[]") // "[::1]:0"
 	rest := display[i+1:]
 	num := rest
 	if j := strings.IndexByte(rest, '.'); j >= 0 {

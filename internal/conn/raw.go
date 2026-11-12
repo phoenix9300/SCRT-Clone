@@ -127,7 +127,11 @@ func dialRlogin(ctx context.Context, req *DialRequest) (Transport, error) {
 		_ = c.SetReadDeadline(time.Now().Add(2 * time.Second))
 		n, _ := c.Read(rest)
 		_ = c.Close()
-		return nil, fmt.Errorf("rlogin refused: %s", strings.TrimSpace(string(ack[:])+string(rest[:n])))
+		msg := string(rest[:n])
+		if ack[0] >= ' ' { // a printable first byte is part of the message; 0x01 is just the error marker
+			msg = string(ack[:]) + msg
+		}
+		return nil, fmt.Errorf("rlogin refused: %s", strings.TrimSpace(msg))
 	}
 	_ = t.Resize(req.Cols, req.Rows)
 	return t, nil
