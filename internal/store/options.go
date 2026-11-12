@@ -2,6 +2,8 @@
 // options, the SSH host key database and the encrypted credential vault.
 package store
 
+import "runtime"
+
 // SessionOptions is the complete, effective configuration of a session.
 // Sessions are stored sparsely (only the values that differ from the default
 // session), see Store.Session.
@@ -290,7 +292,8 @@ func FactoryDefaults() SessionOptions {
 			Allow132:              true,
 			Backspace:             "del",
 			DeleteKey:             "vt",
-			AltIsMeta:             true,
+			// macOS keyboards type characters with Option, so it is not Meta there
+			AltIsMeta:             runtime.GOOS != "darwin",
 			CursorStyle:           "block",
 			CursorBlink:           true,
 			Bell:                  "visual",

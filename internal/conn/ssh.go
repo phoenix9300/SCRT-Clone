@@ -1024,6 +1024,21 @@ func (sc *sshConn) StartForward(spec store.PortForward) *ForwardStatus {
 	if st.Spec.Name == "" {
 		st.Spec.Name = fmt.Sprintf("%s:%d", spec.Type, spec.BindPort)
 	}
+	// names identify forwards in the UI and in StopForward: keep them unique
+	sc.mu.Lock()
+	for n, base := 2, st.Spec.Name; ; n++ {
+		dup := false
+		for _, f := range sc.forwards {
+			if f.Spec.Name == st.Spec.Name {
+				dup = true
+			}
+		}
+		if !dup {
+			break
+		}
+		st.Spec.Name = fmt.Sprintf("%s (%d)", base, n)
+	}
+	sc.mu.Unlock()
 	bind := spec.BindAddr
 	if bind == "" {
 		bind = "127.0.0.1"
